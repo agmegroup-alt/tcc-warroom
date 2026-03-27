@@ -1,0 +1,2411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Coffee Code — War Room</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:#F8F6F2; --card:#FFFFFF; --border:#E4DDD2;
+  --gold:#B07D2A; --gold-lt:#9A6B1E; --gold-dim:#D4A855;
+  --cream:#2C2418; --dim:#8A7D68; --muted:#C8BFB0;
+  --alejandro:#B07D2A; --alex:#2076A8;
+  --green:#2E7D45; --purple:#6B4FA0; --orange:#C05A18; --red:#C03828;
+  --social: #C07010;
+  --tiktok: #CC1840;
+}
+body { background:var(--bg); color:var(--cream); font-family:'DM Sans',sans-serif; min-height:100vh; }
+
+/* ── SOCIAL PANEL ── */
+.social-panel {
+  padding: 12px 28px 16px;
+  border-bottom: 2px solid var(--border);
+  background: #F0EBE3;
+}
+.social-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px; letter-spacing:3px; color:var(--social);
+  margin-bottom:10px; display:flex; align-items:center; gap:10px;
+}
+.social-title::after { content:''; flex:1; height:1px; background:var(--border); }
+.social-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+.scard {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:3px; padding:8px 10px;
+}
+.scard-head {
+  display:flex; align-items:center; gap:6px;
+  margin-bottom:6px; padding-bottom:5px; border-bottom:1px solid var(--border);
+}
+.scard-icon {
+  width:18px; height:18px; border-radius:3px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; flex-shrink:0;
+}
+.scard-name { font-family:'Bebas Neue',sans-serif; font-size:11px; letter-spacing:1.5px; }
+.scard-action {
+  font-size:9.5px; color:var(--cream); line-height:1.45;
+  padding:3px 0; border-bottom:1px solid var(--border);
+  display:flex; align-items:flex-start; gap:5px;
+}
+.scard-action:last-of-type { border-bottom:none; }
+.sa-num {
+  font-family:'Bebas Neue',sans-serif; font-size:16px;
+  color:var(--gold-lt); line-height:1; flex-shrink:0; min-width:22px;
+}
+.sa-text { flex:1; }
+.sa-expect { font-size:8px; color:var(--dim); display:block; margin-top:1px; }
+.scard-who {
+  font-size:7.5px; letter-spacing:1.5px; text-transform:uppercase;
+  margin-top:6px; padding-top:5px; border-top:1px solid var(--border); color:var(--dim);
+}
+.scard-who .wa { color:var(--gold); }
+.scard-who .wx { color:var(--alex); }
+.tiktok-phase { font-size:9px; color:var(--dim); margin-top:3px; line-height:1.5; }
+@media(max-width:1000px){ .social-grid{grid-template-columns:repeat(3,1fr);} }
+@media(max-width:600px){ .social-grid{grid-template-columns:1fr 1fr;} }
+
+.topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px; border-bottom:1px solid var(--border);
+  background:#F0EBE3; position:sticky; top:0; z-index:50;
+}
+.brand { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:3px; color:var(--gold); }
+.brand span { font-size:10px; letter-spacing:2px; color:var(--dim); margin-left:10px; font-family:'DM Mono',monospace; vertical-align:middle; }
+
+.week-selector { display:flex; align-items:center; gap:10px; }
+.nav-btn { width:30px; height:30px; background:var(--card); border:1px solid var(--border); color:var(--cream); font-size:18px; cursor:pointer; border-radius:3px; display:flex; align-items:center; justify-content:center; transition:border-color .15s; }
+.nav-btn:hover { border-color:var(--gold); }
+.week-label { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); min-width:75px; text-align:center; }
+.week-phase { font-size:8px; color:var(--dim); font-family:'DM Mono',monospace; letter-spacing:1px; text-align:center; }
+
+.dots { display:flex; gap:4px; padding:8px 28px; border-bottom:1px solid var(--border); background:#F0EBE3; flex-wrap:wrap; }
+.dot { width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); background:var(--card); cursor:pointer; font-family:'DM Mono',monospace; font-size:8px; color:var(--dim); display:flex; align-items:center; justify-content:center; transition:all .15s; }
+.dot:hover { border-color:var(--gold-dim); }
+.dot.active { background:var(--gold); border-color:var(--gold); color:#FFFFFF; font-weight:700; }
+.dot.star { border-color:var(--gold-dim); }
+
+.strip {
+  padding:8px 28px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  background:var(--card);
+}
+.strip-phase { font-family:'Bebas Neue',sans-serif; font-size:10px; letter-spacing:3px; color:var(--gold); }
+.strip-kpis { display:flex; gap:20px; }
+.kpi { text-align:center; }
+.kpi-v { font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--gold-lt); }
+.kpi-l { font-size:7px; letter-spacing:1.5px; color:var(--dim); text-transform:uppercase; }
+
+.prog-bar { display:flex; align-items:center; gap:12px; padding:7px 28px; border-bottom:1px solid var(--border); }
+.prog-lbl { font-size:8px; letter-spacing:1.5px; color:var(--dim); text-transform:uppercase; white-space:nowrap; }
+.prog-track { flex:1; height:3px; background:var(--muted); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--gold); border-radius:2px; transition:width .4s; }
+.prog-val { font-family:'DM Mono',monospace; font-size:9px; color:var(--gold-lt); white-space:nowrap; }
+
+.columns { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); }
+.col { background:var(--bg); padding:20px 22px 50px; }
+
+.p-head { display:flex; align-items:center; gap:10px; margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid var(--border); }
+.p-dot { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:13px; }
+.p-name { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; }
+.p-role { font-size:9px; letter-spacing:1px; color:var(--dim); text-transform:uppercase; margin-top:2px; }
+
+.day-block { margin-bottom:14px; }
+.day-lbl { font-family:'Bebas Neue',sans-serif; font-size:10px; letter-spacing:3px; color:var(--dim); margin-bottom:5px; display:flex; align-items:center; gap:8px; }
+.day-lbl::after { content:''; flex:1; height:1px; background:var(--border); }
+.day-lbl.sun { color:var(--gold-lt); }
+
+.task { display:flex; align-items:flex-start; gap:7px; padding:5px 7px; border-radius:3px; margin-bottom:2px; cursor:pointer; transition:background .1s; border:1px solid transparent; }
+.task:hover { background:rgba(255,255,255,0.025); border-color:var(--border); }
+.task.done { opacity:.35; }
+.task.done .t-text { text-decoration:line-through; }
+
+.chk { width:13px; height:13px; flex-shrink:0; margin-top:2px; border:1.5px solid var(--muted); border-radius:2px; display:flex; align-items:center; justify-content:center; transition:all .15s; font-size:8px; font-weight:700; }
+.task.done .chk { background:var(--green); border-color:var(--green); color:white; }
+
+.cat { width:3px; border-radius:2px; flex-shrink:0; align-self:stretch; min-height:14px; }
+.c-ops    { background:var(--alejandro); }
+.c-dm     { background:var(--alex); }
+.c-legal  { background:var(--purple); }
+.c-acc    { background:var(--orange); }
+.c-funnel { background:var(--red); }
+.c-bcorp  { background:var(--green); }
+.c-both   { background:var(--dim); }
+
+.t-text { font-size:10.5px; line-height:1.5; color:var(--cream); flex:1; }
+.t-text em { font-style:normal; font-size:8.5px; color:var(--dim); display:block; margin-top:1px; }
+.flag { font-size:8px; background:var(--gold); color:#FFFFFF; padding:1px 5px; border-radius:2px; font-family:'DM Mono',monospace; flex-shrink:0; align-self:center; white-space:nowrap; }
+
+.legend { display:flex; gap:14px; padding:8px 28px; border-top:1px solid var(--border); flex-wrap:wrap; background:#F0EBE3; }
+.leg-item { display:flex; align-items:center; gap:5px; font-size:8.5px; color:var(--dim); }
+.leg-dot { width:8px; height:8px; border-radius:50%; }
+
+@media(max-width:700px){ .columns{grid-template-columns:1fr;} .topbar,.dots,.strip,.prog-bar,.legend{padding-left:14px;padding-right:14px;} .col{padding:14px 14px 40px;} }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">☕ The Coffee Code <span>War Room · 18 Weeks</span></div>
+  <div id="sync-dot" style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);opacity:0.4;transition:opacity .5s">● live</div>
+  <div class="week-selector">
+    <button class="nav-btn" id="prev">‹</button>
+    <div><div class="week-label" id="wlbl">WEEK 1</div><div class="week-phase" id="wphase"></div></div>
+    <button class="nav-btn" id="next">›</button>
+  </div>
+</header>
+
+<div class="dots" id="dots"></div>
+
+<div class="prog-bar">
+  <span class="prog-lbl">18-Week Progress</span>
+  <div class="prog-track"><div class="prog-fill" id="pfill"></div></div>
+  <span class="prog-val" id="pval"></span>
+</div>
+
+<div class="strip">
+  <span class="strip-phase" id="sphase"></span>
+  <div class="strip-kpis" id="skpis"></div>
+</div>
+
+<div class="columns">
+  <div class="col" id="col-a"></div>
+  <div class="col" id="col-x"></div>
+</div>
+
+<!-- DAILY SOCIAL MEDIA PANEL -->
+<div class="social-panel">
+  <div class="social-title">📱 DAILY SOCIAL MEDIA ACTIONS — BOTH ALEJANDRO + ALEX — EVERY DAY</div>
+  <div class="social-grid">
+
+    <!-- INSTAGRAM: ICA -->
+    <div class="scard">
+      <div class="scard-head">
+        <div class="scard-icon" style="background:rgba(232,160,32,0.15)">📸</div>
+        <div class="scard-name" style="color:var(--social)">IG · Customer DMs</div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">20</div>
+        <div class="sa-text">DMs to ideal customer avatar
+          <span class="sa-expect">→ 3–6 replies · 2–4 link clicks · 0–1 sales</span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">20</div>
+        <div class="sa-text">Likes on posts from target audience accounts
+          <span class="sa-expect">→ warms the account before DM</span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">20</div>
+        <div class="sa-text">Comments on posts in espresso/barista/coffee niche
+          <span class="sa-expect">→ 5–10 profile visitors per day</span>
+        </div>
+      </div>
+      <div class="scard-who"><span class="wa">Alejandro</span> + <span class="wx">Alex</span> — 20 each, different accounts</div>
+    </div>
+
+    <!-- INSTAGRAM: INFLUENCERS -->
+    <div class="scard">
+      <div class="scard-head">
+        <div class="scard-icon" style="background:rgba(79,168,216,0.15)">🤝</div>
+        <div class="scard-name" style="color:var(--alex)">IG · Influencer DMs</div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">20</div>
+        <div class="sa-text">Personalized DMs to micro-influencers (5K–80K, 3.5%+ engagement)
+          <span class="sa-expect">→ 3–6 replies · 1–2 interested in partnering</span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">5</div>
+        <div class="sa-text">Follow-ups to influencers who did not reply in 3 days
+          <span class="sa-expect">→ adds 1–2 replies from warm leads</span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">3</div>
+        <div class="sa-text">Engage with content of active influencer partners
+          <span class="sa-expect">→ retention + relationship depth</span>
+        </div>
+      </div>
+      <div class="scard-who">Primary: <span class="wx">Alex</span> · Support: <span class="wa">Alejandro</span></div>
+    </div>
+
+    <!-- FACEBOOK GROUPS -->
+    <div class="scard">
+      <div class="scard-head">
+        <div class="scard-icon" style="background:rgba(100,130,220,0.15)">👥</div>
+        <div class="scard-name" style="color:#7090E0">Facebook Groups</div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">3</div>
+        <div class="sa-text">Meaningful comments on top posts in coffee groups
+          <span class="sa-expect">→ 1M+ combined group members</span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">1</div>
+        <div class="sa-text">Conversation starter post per group (value-first, not promotional)
+          <span class="sa-expect">→ 3–5 profile visits per post</span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">2</div>
+        <div class="sa-text">Direct replies to people asking coffee questions
+          <span class="sa-expect">→ 1–3 DM conversations opened</span>
+        </div>
+      </div>
+      <div class="scard-who"><span class="wa">Alejandro</span> + <span class="wx">Alex</span> — different groups daily</div>
+    </div>
+
+    <!-- REDDIT -->
+    <div class="scard">
+      <div class="scard-head">
+        <div class="scard-icon" style="background:rgba(220,80,40,0.15)">🔴</div>
+        <div class="scard-name" style="color:#E06040">Reddit</div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">5</div>
+        <div class="sa-text">Helpful replies in r/espresso, r/coffee, r/barista, r/Coffee
+          <span class="sa-expect">→ 1–3 link clicks to profile · 0–1 DM opens</span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">1</div>
+        <div class="sa-text">Original post or question (value-first, no selling)
+          <span class="sa-expect">→ 5–20 upvotes if genuinely helpful</span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">2</div>
+        <div class="sa-text">Reply to posts asking "where to buy fresh roasted coffee"
+          <span class="sa-expect">→ highest intent, most likely to convert</span>
+        </div>
+      </div>
+      <div class="scard-who">Primary: <span class="wx">Alex</span> · Support: <span class="wa">Alejandro</span></div>
+    </div>
+
+    <!-- TIKTOK -->
+    <div class="scard">
+      <div class="scard-head">
+        <div class="scard-icon" style="background:rgba(255,45,85,0.15)">🎵</div>
+        <div class="scard-name" style="color:var(--tiktok)">TikTok Strategy</div>
+      </div>
+      <div class="scard-action" id="tiktok-action-1">
+        <div class="sa-num">1</div>
+        <div class="sa-text" id="tiktok-video-desc">Video: loading strategy by phase…
+          <span class="sa-expect" id="tiktok-expect-1"></span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">10</div>
+        <div class="sa-text">Comments on trending coffee/espresso TikToks
+          <span class="sa-expect">→ 3–8 profile visits per comment thread</span>
+        </div>
+      </div>
+      <div class="scard-action">
+        <div class="sa-num">5</div>
+        <div class="sa-text">Replies to comments on your own videos — every comment
+          <span class="sa-expect">→ boosts algorithmic reach by 15–30%</span>
+        </div>
+      </div>
+      <div class="tiktok-phase" id="tiktok-phase-text">Loading…</div>
+      <div class="scard-who">Primary: <span class="wx">Alex</span> films + edits · <span class="wa">Alejandro</span> appears on camera</div>
+    </div>
+
+  </div><!-- end social-grid -->
+</div><!-- end social-panel -->
+
+<div class="legend">
+  <span style="font-size:8px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase">Legend:</span>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--alejandro)"></div>Alejandro — Ops/Legal</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--alex)"></div>Alex — DMs/Funnels</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--purple)"></div>Legal</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--orange)"></div>Accounting</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>ClickFunnels/Stripe</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>B Corp</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--social)"></div>Social Media</div>
+  <div class="leg-item"><div class="leg-dot" style="background:var(--tiktok)"></div>TikTok</div>
+</div>
+
+<script>
+const CUM=[23,158,496,1284,2559,4434,6984,14724,24084,35244,48204,62604,77304,92454,108354,126354,146354,170254];
+const PKS=[3,18,45,105,170,250,340,430,520,620,720,800,800,800,800,800,800,800];
+const GRN=[0,0,0,0,0,0,0,0,0,0,0,0,200,500,1000,1800,2800,3800];
+const PRF=[23,135,338,788,1275,1875,2550,7740,9360,11160,12960,14400,14700,15150,15900,18000,20000,23900];
+const PH={1:'Phase 1 · Foundation',2:'Phase 1 · Foundation',3:'Phase 1 · First Orders',4:'Phase 1 · Influencer Growth',5:'Phase 1 · Influencer Growth',6:'Phase 1 · Influencer Growth',7:'Phase 1 · Scale Prep',8:'Phase 2 · Scale + Green Outreach',9:'Phase 2 · Scale + Green Outreach',10:'Phase 2 · Scale + Green Outreach',11:'Phase 2 · Scale + Green Outreach',12:'Phase 2 · 800 Packs Milestone',13:'Phase 3 · Dual Revenue',14:'Phase 3 · Dual Revenue',15:'Phase 3 · Dual Revenue',16:'Phase 3 · Dual Revenue',17:'Phase 3 · Final Push',18:'Phase 3 · Final Push'};
+
+// O=ops, D=dm, L=legal, AC=acc, F=funnel, B=bcorp, BT=both
+const O='ops',D='dm',L='legal',AC='acc',F='funnel',B='bcorp',BT='both';
+
+const W={
+1:{a:{
+MON:[
+{t:'File U.S. LLC online — Delaware or Wyoming',n:'Northwest Registered Agent — takes ~1 hour',c:L,f:'DAY 1'},
+{t:'Research contract roasters: confirm price/lb, MOQ, lead time, packaging specs',c:O},
+{t:'Buy domain and set up professional email: alejandro@thecoffeecode.com',c:BT},
+{t:'Create Google Sheet with 3 tabs: DM Tracker / Order Tracker / P&L',c:BT},
+{t:'Map full supply chain from farm to door — every gap becomes a to-do',c:O},
+{t:'Make list of all documents needed to open a U.S. bank account',c:L}],
+TUE:[
+{t:'Apply for EIN at IRS.gov — free, instant',n:'Do this the morning after LLC is confirmed',c:L},
+{t:'Call top 3 contract roasters — request pricing sheet and test sample',c:O},
+{t:'Begin Colombia SAS research: call notary in Andes, get document requirements list',c:L},
+{t:'Set up Google Drive folder structure: Legal / Finance / Operations / Green Coffee / B Corp',c:BT},
+{t:'Research 2–3 packaging suppliers: bags must show harvest date + roast date field',c:O},
+{t:'Write your founder story in 3 sentences — you will use this everywhere',c:BT}],
+WED:[
+{t:'Open U.S. business bank account at Mercury.com',n:'Free, fully online, takes 20 minutes',c:L},
+{t:'Place first roasted coffee order — enough for 50–100 packs, confirm delivery date',c:O},
+{t:'Set up physical shipping station: boxes, scale, tape gun, packing slips',c:O},
+{t:'Order packaging bags from supplier — confirm harvest date + roast date field is on the bag',c:O},
+{t:'Set up Google Sheet P&L tab: week / packs sold / revenue / COGS / net profit columns',c:BT},
+{t:'Draft simple product spec sheet: bag size, weight, roast profile, origin, process',c:O}],
+THU:[
+{t:'Draft founder operating agreement: roles, equity split, decision authority, dissolution terms',c:L},
+{t:'Search USPTO trademark: "The Coffee Code" — identify any conflicts before filing',c:L},
+{t:'Identify backup contract roaster — you must have 2 options before orders begin',c:O},
+{t:'Create supply chain documentation spreadsheet: farm → mill → roaster → ship',c:B},
+{t:'Set up Wave (free) or QuickBooks Starter: chart of accounts ready',c:AC},
+{t:'Read B Corp BIA overview at bcorporation.net — understand all 5 impact areas',c:B}],
+FRI:[
+{t:'Begin Colombia SAS registration: schedule notary appointment in Antioquia',c:L},
+{t:'Confirm first coffee order on track — get written confirmation from roaster',c:O},
+{t:'Set up COGS spreadsheet: $56.50/pack fully loaded breakdown — coffee, bag, ship, affiliate',c:AC},
+{t:'Build top 100 U.S. specialty roaster contact list: name, city, IG handle, email',n:'For green coffee outreach starting Week 8',c:O},
+{t:'Research ICA Colombia: what is required for phytosanitary coffee export certificate?',c:L},
+{t:'Write 3 versions of influencer DM pitch — you will A/B test all 3 next week',c:D}],
+SAT:[
+{t:'Set up Stripe business account — connect to ClickFunnels, confirm tax settings',c:F},
+{t:'Identify your 3 strongest B Corp impact pillars: regenerative farming, worker pay, transparency',c:B},
+{t:'Document farmer relationships: names, farms, regions, price paid vs FNC base price',c:B},
+{t:'Add 50 more roasters to your target list — you want 100 before Week 8',c:O},
+{t:'Research freight forwarder options for Colombia → Miami green coffee route',c:O},
+{t:'Write brand positioning: who you are, who it is for, what makes it different',c:BT}],
+SUN:[
+{t:'⭐ REVIEW: LLC filed ✓ EIN received ✓ Bank account open ✓ First order placed ✓',c:BT},
+{t:'Update Google Sheet: all Week 1 legal tasks logged with status and next action',c:L},
+{t:'Confirm coffee delivery date and plan Week 3 inventory needs',c:O},
+{t:'Review COGS model — does $56.50/pack hold when all costs are factored in?',c:AC},
+{t:'Plan Week 2 priorities: Colombia SAS, sample kits, first influencer DMs',c:BT},
+{t:'Write this week\'s lessons learned — what took longer than expected?',c:BT}]},
+x:{
+MON:[
+{t:'Verify ClickFunnels full funnel: offer page → order form → bump → upsell → thank you',c:F,f:'LAUNCH DAY'},
+{t:'Connect Stripe to ClickFunnels — run $1 test charge and refund immediately',c:F},
+{t:'Confirm pixel fires correctly on purchase confirmation page',c:F},
+{t:'Test abandoned cart email — place then abandon an order, confirm email arrives within 1 hour',c:F},
+{t:'Enable Sticky Cookie — test 1 complete affiliate click-to-purchase flow end to end',c:F},
+{t:'Set up email automation: welcome (day 0) → follow-up (day 3) → subscription offer (day 7)',c:F}],
+TUE:[
+{t:'Build first DM target list: 300 micro-influencers, coffee/espresso niche, 5K–80K followers, 3.5%+ engagement',c:D},
+{t:'Write 3 personalized DM openers referencing specific content from each target\'s feed',c:D},
+{t:'Send first 35 personalized DMs — no templates, reference their actual content',c:D},
+{t:'Create DM tracker spreadsheet: handle, date sent, reply status, follow-up date',c:D},
+{t:'Set up Wave or QuickBooks: chart of accounts with COGS, affiliate fees, shipping',c:AC},
+{t:'Verify ClickFunnels order confirmation email arrives and looks correct',c:F}],
+WED:[
+{t:'Send 35 DMs — new targets, different opening lines, log all results',c:D},
+{t:'Review Monday DM replies — respond to every reply within 2 hours',c:D},
+{t:'For any influencer who expressed interest: send affiliate link + 1-page content brief',c:D},
+{t:'Confirm ClickFunnels upsell fires post-purchase on both mobile and desktop',c:F},
+{t:'Check welcome email open rate — is it above 30%?',c:F},
+{t:'Build influencer content brief: talking points, what to say, what not to say',c:D}],
+THU:[
+{t:'Send 35 DMs — refine opener based on which version got replies Mon/Tue',c:D},
+{t:'Review all replies: Interested / Needs follow-up / No — log each in tracker',c:D},
+{t:'Test ClickFunnels checkout on mobile — fast load? Easy form?',c:F},
+{t:'Set COGS model in accounting: $56.50/pack — coffee, bag, shipping, affiliate %',c:AC},
+{t:'Write influencer welcome email: what they get, how affiliate link works, payment schedule',c:D},
+{t:'Research: which 5 accounts on your list have the most engaged espresso audiences?',c:D}],
+FRI:[
+{t:'Send 35 DMs — weekend is coming, send today for Friday/Saturday replies',c:D},
+{t:'Log this week\'s DM stats: total sent, reply rate, interested %, converted to affiliate',c:D},
+{t:'ClickFunnels: A/B test offer page headline — set up version A and version B today',c:F},
+{t:'Confirm ClickFunnels subscription product set up correctly — monthly billing, correct price',c:F},
+{t:'Review Stripe settings: tax collection enabled, payout schedule confirmed',c:AC},
+{t:'Build Week 2 DM batch: 300 new targets queued and organized by niche',c:D}],
+SAT:[
+{t:'Send 35 DMs — Saturday engagement is 20% higher, capitalize on it',c:D},
+{t:'Respond to all DM replies within 1 hour — fast response = higher conversion',c:D},
+{t:'Review Week 1 ClickFunnels analytics: sessions, CTR, conversions — where is drop-off?',c:F},
+{t:'Set up referral program on thank-you page: bonus for customer referrals',c:F},
+{t:'Create social proof folder in Google Drive — for every influencer post that goes live',c:D},
+{t:'Write 3-paragraph brand story for ClickFunnels offer page — authentic and specific',c:F}],
+SUN:[
+{t:'⭐ REVIEW: Funnel live ✓ Stripe working ✓ Total DMs this week: 200+ target',c:BT},
+{t:'Log P&L: Week 1 revenue ($0–$50 is normal), COGS, net',c:AC},
+{t:'Analyze DM results: which opening line had the highest reply rate?',c:D},
+{t:'Queue Week 2 DM list: 300 new targets ready, organized, in tracker',c:D},
+{t:'Plan Week 2: A/B test continues, first influencer kit ships, first order expected',c:BT},
+{t:'Write top 3 learnings from Week 1 — what to do differently next week',c:BT}]}},
+2:{a:{
+MON:[
+{t:'Receive first roasted coffee inventory: count every bag, photograph, quality check',c:O},
+{t:'Verify harvest date is on every bag — reject any without it',c:O},
+{t:'Confirm Colombia SAS notary appointment date — if not booked, call today',c:L},
+{t:'Pack first 3–5 influencer sample kits for anyone who accepted in Week 1',c:O},
+{t:'Set up shipping carrier account: USPS Business — get commercial pricing',c:O},
+{t:'Draft Coordinadora de Campo job description: responsibilities, salary range, Brix bonus',c:O}],
+TUE:[
+{t:'File USPTO trademark application for "The Coffee Code" — TEAS Plus, ~$250/class',c:L},
+{t:'Ship first sample kits via USPS Priority Mail — save every tracking number',c:O},
+{t:'Send tracking numbers to influencers with expected delivery date',c:D},
+{t:'Photograph inventory with good lighting — you need 10+ product photos',c:O},
+{t:'Write SOP: how to pack, label, and ship one order — 15 min to write, saves hours',c:O},
+{t:'Research INVIMA food export certification requirements for Colombia',c:L}],
+WED:[
+{t:'Colombia SAS: gather all required notary documents',c:L},
+{t:'Identify second backup contract roaster — get pricing and lead time in writing',c:O},
+{t:'Cup test your first coffee lot — evaluate against your SCA target score',c:O},
+{t:'Create B Corp impact spreadsheet: tab 1 = Workers, tab 2 = Environment, tab 3 = Community',c:B},
+{t:'Document your wet mill process: NUNA dryer stages, temperatures, moisture targets',c:B},
+{t:'Set up customer email: info@thecoffeecode.com for order and shipping inquiries',c:O}],
+THU:[
+{t:'Visit notary for Colombia SAS if appointment is today',c:L},
+{t:'Restock check: packs on hand? If below 30, reorder immediately.',c:O},
+{t:'Create product one-sheet: origin story, processing, flavor notes, harvest date field',c:O},
+{t:'Begin supply chain impact log: farm names, # of farmers, price paid per lb, date',c:B},
+{t:'Research top 50 U.S. specialty roasters to add to contact list',c:O},
+{t:'Review Week 2 inventory needs: 18 packs expected — supply confirmed?',c:O}],
+FRI:[
+{t:'Follow up with roaster: is your order on schedule? Get exact delivery date.',c:O},
+{t:'Update shipping SOP: any issues from first kit shipments? Improve the process.',c:O},
+{t:'Research FDA food facility registration requirements',c:L},
+{t:'Continue building top 100 roaster contact list — add Instagram handles',c:O},
+{t:'B Corp: read BIA Workers section — document your own pay structure and hours',c:B},
+{t:'Create customer FAQ: delivery times, freshness, how to brew espresso',c:O}],
+SAT:[
+{t:'Pack 10 additional influencer sample kits — always stay ahead of demand',c:O},
+{t:'B Corp: identify your 3 strongest environmental differentiators vs commercial coffee',c:B},
+{t:'Add 50 more roasters to target list — goal is 100 total before Week 8',c:O},
+{t:'Document farmer payment terms: how are they paid, when, is it above FNC base?',c:B},
+{t:'Research Colombian SAS annual filing requirements and compliance calendar',c:L},
+{t:'Update Google Drive: all Week 2 legal documents filed in correct folders',c:BT}],
+SUN:[
+{t:'⭐ REVIEW: Samples shipped ✓ Inventory received ✓ Colombia SAS in progress ✓',c:BT},
+{t:'Update P&L: Week 2 revenue, COGS, net — compare to Week 1',c:AC},
+{t:'Confirm Week 3 inventory: enough for 45 packs minimum',c:O},
+{t:'Legal checklist: LLC ✓ EIN ✓ Bank ✓ Trademark filed ✓ Colombia SAS scheduled ✓',c:L},
+{t:'Plan Week 3: first real orders arrive, fulfillment begins — are you ready?',c:BT},
+{t:'Write down what slowed you down this week — eliminate that bottleneck',c:BT}]},
+x:{
+MON:[
+{t:'Send 35 DMs — follow up every Week 1 non-reply using the 3-day rule',c:D},
+{t:'For every influencer who accepted: send affiliate link + content brief + sample kit ETA',c:D},
+{t:'Review Week 1 A/B test if 100+ sessions — keep winner, kill loser',c:F},
+{t:'ClickFunnels: add a countdown timer to the offer page — creates urgency',c:F},
+{t:'Set up Google Analytics on ClickFunnels — know your traffic sources',c:F},
+{t:'Create influencer FAQ: how affiliate link works, how they get paid, timeline',c:D}],
+TUE:[
+{t:'Send 35 DMs — new targets. Total week goal: 200+ DMs.',c:D},
+{t:'Review all DM replies from Monday — respond within 2 hours maximum',c:D},
+{t:'ClickFunnels: check CTR on offer page — if below 3%, headline needs work',c:F},
+{t:'Log this week\'s DM data: sent, replies, interested, follow-ups scheduled',c:D},
+{t:'Review Stripe dashboard: any test charges still pending? Clear them.',c:AC},
+{t:'Research 50 more influencer targets for Week 3 DM list',c:D}],
+WED:[
+{t:'Send 35 DMs + follow up warm leads from Week 1 who need a nudge',c:D},
+{t:'Any influencer who posted: screenshot it, save to social proof folder',c:D},
+{t:'ClickFunnels: test mobile checkout — does it load under 3 seconds?',c:F},
+{t:'Review email automation: are welcome emails delivering? Check spam rates.',c:F},
+{t:'Update influencer tracker: who received samples, when shipped, expected delivery',c:D},
+{t:'Write case study of any influencer who posted — what they said, what worked',c:D}],
+THU:[
+{t:'Send 35 DMs — use best-performing opener from Week 1 data',c:D},
+{t:'If people open DM but don\'t reply: opener works, pitch needs improvement',c:D},
+{t:'Log Week 2 financials: Stripe revenue, COGS, net margin',c:AC},
+{t:'ClickFunnels: subscription upsell — does it fire on all devices?',c:F},
+{t:'Prepare influencer content performance tracker: views, link clicks, sales per partner',c:D},
+{t:'Research 3 competitor D2C coffee brands — what are they doing on their funnels?',c:F}],
+FRI:[
+{t:'Send 35 DMs — focus on accounts that posted coffee content in the last 7 days',c:D},
+{t:'Review DM pitch: what question gets a reply without selling?',c:D},
+{t:'ClickFunnels: set up order bump — add-on item at checkout for extra revenue',c:F},
+{t:'Test full thank-you page: referral link visible? Tracking correct?',c:F},
+{t:'Stripe: confirm payouts set to weekly — you want money in your account fast',c:AC},
+{t:'Build Week 3 DM list: 250 new targets, organized by niche and engagement',c:D}],
+SAT:[
+{t:'Send 35 DMs — Saturdays have highest influencer reply rates of the week',c:D},
+{t:'Respond to every reply within 1 hour — speed is your advantage over bigger brands',c:D},
+{t:'ClickFunnels: review all email open rates and click rates from this week',c:F},
+{t:'Create influencer content brief template: talking points, hashtags, do\'s and don\'ts',c:D},
+{t:'Map influencer growth targets: Wk 1=5, Wk 3=10, Wk 6=30, Wk 12=71',c:D},
+{t:'Review offer page: does social proof section look credible? Improve it.',c:F}],
+SUN:[
+{t:'⭐ REVIEW: Total DMs 200+? First orders? Any influencer posts live? P&L close.',c:BT},
+{t:'Log all metrics: DMs sent, reply rate, conversion to affiliate, revenue, COGS, net',c:AC},
+{t:'Analyze: which influencer niche got most replies — espresso, barista, or lifestyle?',c:D},
+{t:'Queue Week 3 DM list: 250 new targets ready by Monday 8AM',c:D},
+{t:'Prep weekly influencer newsletter template — send to all active partners every Sunday',c:D},
+{t:'Plan Week 3: first real orders, first fulfillment — coordinate with Alejandro',c:BT}]}},
+3:{a:{
+MON:[
+{t:'Receive and inspect incoming inventory — harvest date, weight, quality confirmed',c:O,f:'FIRST ORDERS'},
+{t:'Fulfill first 3–10 orders this week — ship every order within 24 hours',n:'Fulfillment begins this week for the first time',c:O},
+{t:'Open U.S. business bank account if not done in Week 2 — Mercury.com',c:L},
+{t:'Set up shipping label software: Pirateship.com — saves 20–30% on postage',c:O},
+{t:'Create order fulfillment checklist: pick → pack → weigh → label → ship → log tracking',c:O},
+{t:'Document this coffee lot: origin farm, harvest date, processing method, moisture content',c:B}],
+TUE:[
+{t:'File Colombia SAS at notary if appointment is today',c:L},
+{t:'Reorder roasted coffee — maintain minimum 4-week buffer from this point forward',c:O},
+{t:'Ship all pending orders — confirm tracking email sent to every customer same day',c:O},
+{t:'Create customer satisfaction follow-up email: send 5 days after delivery',c:O},
+{t:'Draft Terms of Service for ClickFunnels storefront — returns, shipping, freshness policy',c:L},
+{t:'Update supply chain doc: add roaster name, roast date, lot number for this batch',c:B}],
+WED:[
+{t:'Cup test every new coffee lot before accepting it',c:O},
+{t:'Inventory count: packs on hand, orders pending, gap = reorder quantity',c:O},
+{t:'Set up customer support process: lost package? Bad bag? Write it down.',c:O},
+{t:'Research ICA phytosanitary certificate: list every required step and document',c:L},
+{t:'B Corp: document environmental impact of your drying method vs conventional',c:B},
+{t:'Begin Privacy Policy draft — use iubenda.com, GDPR + CCPA',c:L}],
+THU:[
+{t:'Fulfill all orders. No backlog going into Friday.',c:O},
+{t:'Follow up Colombia SAS notary: NIT number received? If not, call today.',c:L},
+{t:'Pack 10 more influencer sample kits — you will need them as Week 4 grows',c:O},
+{t:'Research FDA food facility registration — gather required company information',c:L},
+{t:'Update P&L: Week 3 actual vs $338 projection — log the variance',c:AC},
+{t:'B Corp: begin Workers section — document Coordinadora de Campo role you plan to hire',c:B}],
+FRI:[
+{t:'Confirm carrier handling volume — any complaints about delivery speed?',c:O},
+{t:'Negotiate shipping rates: if 20+ packages shipped this week, call for commercial rates',c:O},
+{t:'Confirm second roaster has samples ready — order a test batch this week',c:O},
+{t:'Build Week 4 inventory plan: 105 packs needed — supply chain ready?',c:O},
+{t:'Update legal tracker: all Week 3 tasks logged with status',c:L},
+{t:'B Corp: Customers section — who are your end consumers, what is your impact?',c:B}],
+SAT:[
+{t:'Pack all Monday orders in advance — ship first thing Monday',c:O},
+{t:'Review fulfillment SOP: followed perfectly this week? What needs updating?',c:O},
+{t:'Add 50 more roasters to your green coffee contact list',c:O},
+{t:'Document supply chain: farm names, harvest dates, processing details',c:B},
+{t:'Research Colombian freight forwarder: get 2–3 quotes for Medellín → Miami route',c:O},
+{t:'Write first draft of green coffee one-pager: origin, process, SCA score',c:O}],
+SUN:[
+{t:'⭐ REVIEW: 45 packs shipped? $496 cumulative? Month 1 P&L close — all numbers in.',c:BT},
+{t:'Legal checklist: LLC ✓ EIN ✓ Bank ✓ Trademark filed ✓ Colombia SAS in progress ✓',c:L},
+{t:'B Corp tracker: Workers + Environment sections partially complete?',c:B},
+{t:'Review: current cost per fulfilled order — is $56.50 holding?',c:AC},
+{t:'Plan Week 4: 105 packs, 10+ active influencers, Privacy Policy live',c:BT},
+{t:'Update roaster contact list — you want 100 names before Week 8',c:O}]},
+x:{
+MON:[
+{t:'Send 35 DMs — new targets + 3-week follow-up to your very first Week 1 contacts',c:D},
+{t:'ClickFunnels: if A/B test ran 5+ days with 100+ sessions, check results — keep winner',c:F},
+{t:'Update influencer tracker: follow-up column, next contact date for every active lead',c:D},
+{t:'Review Week 2 DM data: which niche had highest reply % — espresso, barista, lifestyle?',c:D},
+{t:'ClickFunnels: add "freshness guarantee" — harvest + roast date visible on offer page',c:F},
+{t:'Draft Week 3 influencer newsletter: results so far, what is working, content tips',c:D}],
+TUE:[
+{t:'Send 35 DMs + follow up warm list. Target this week: 10 active influencer partners.',c:D},
+{t:'Weekly P&L entry: Week 3 revenue, COGS, gross margin vs $338 target',c:AC},
+{t:'Check email automation: open rates above 30%? Click rates above 5%?',c:F},
+{t:'Brief newly activated influencers: send content brief + affiliate link',c:D},
+{t:'Research: what are top 10 coffee influencers posting about this month? Adapt pitch.',c:D},
+{t:'Update DM tracker: total sent, replied, interested, converted, sample sent, posting',c:D}],
+WED:[
+{t:'Send 35 DMs — adjust opener for accounts with >5% engagement',c:D},
+{t:'Respond to all DM replies within 2 hours — set a reminder alarm',c:D},
+{t:'ClickFunnels: subscription upsell A/B — "save 15%" vs "never run out"',c:F},
+{t:'Set up influencer content calendar: what should each active partner post this week?',c:D},
+{t:'Review: any influencer who posted — view count? How many link clicks?',c:D},
+{t:'ClickFunnels: confirm order bump revenue — how much extra per order?',c:F}],
+THU:[
+{t:'Send 35 DMs — accounts with 3.5%+ engagement get personalized outreach',c:D},
+{t:'COGS verification: is $56.50/pack still accurate? Log every cost component.',c:AC},
+{t:'Any influencer with 2+ posts: propose upgrading to subscription affiliate model',c:D},
+{t:'ClickFunnels: review abandoned cart email — open rate, recovery rate',c:F},
+{t:'Check Stripe: all transactions categorized correctly in accounting?',c:AC},
+{t:'Build influencer leaderboard: handle, posts, clicks, sales, commission earned',c:D}],
+FRI:[
+{t:'Send 35 DMs — collect any UGC from influencers, request repost permission',c:D},
+{t:'Repost 1 piece of influencer UGC to brand social channels with permission',c:D},
+{t:'ClickFunnels: test full upsell + downsell on mobile — does it work perfectly?',c:F},
+{t:'Stripe: confirm weekly payout received — amount correct vs order volume?',c:AC},
+{t:'Build Week 4 DM list: 300 new targets with engagement rate and niche tagged',c:D},
+{t:'Review ClickFunnels analytics: sessions, CTR, conversion, AOV — log all',c:F}],
+SAT:[
+{t:'Send 35 DMs — weekend peak, highest reply rates of the week',c:D},
+{t:'Respond to every DM reply within 1 hour today',c:D},
+{t:'ClickFunnels: Google PageSpeed test on checkout — fast on mobile?',c:F},
+{t:'Calculate your DM → affiliate conversion rate — what is the number?',c:D},
+{t:'Plan influencer activation for Week 4: who is closest to posting first content?',c:D},
+{t:'Review offer page: does it accurately reflect product quality? Update any copy.',c:F}],
+SUN:[
+{t:'⭐ REVIEW: 250+ DMs? 10 active influencers? Month 1 P&L: revenue, COGS, net, CAC.',c:BT},
+{t:'Send Week 3 influencer newsletter: results update, next week content suggestions',c:D},
+{t:'Queue Week 4 DM list: 300 targets ready and organized',c:D},
+{t:'Calculate CAC: total samples + time cost ÷ influencers activated',c:AC},
+{t:'Plan Week 4: 105 packs target, 15 active influencers, Privacy Policy live',c:BT},
+{t:'Set reminder: affiliate agreements must be with lawyer before Week 6',c:L}]}},
+4:{a:{
+MON:[
+{t:'Daily fulfillment — ship all orders. Expected: 10–15 orders/day. Confirm tracking.',c:O},
+{t:'Draft Privacy Policy — GDPR + CCPA',n:'Use iubenda.com or have lawyer draft it',c:L},
+{t:'Confirm Colombia SAS NIT number received — if not, call notary and escalate',c:L},
+{t:'Source second roaster: get written pricing and lead time commitment',c:O},
+{t:'Review order accuracy: packs packed correctly, labels right, tracking sent?',c:O},
+{t:'Update supply chain doc: new lot number, roast date, harvest date logged',c:B}],
+TUE:[
+{t:'Fulfill all Tuesday orders by 2PM — zero backlog into Wednesday',c:O},
+{t:'Inventory reorder: maintain 3-week forward supply at all times',c:O},
+{t:'Send affiliate agreement draft to lawyer — must be ready before Week 7',c:L},
+{t:'Build Week 5 inventory plan: 170 packs needed — supply secured?',c:O},
+{t:'B Corp: document farmer payment terms — exact price paid vs FNC base price',c:B},
+{t:'Research sales tax: which states require collection for D2C coffee? Log nexus rules.',c:L}],
+WED:[
+{t:'Fulfill Wednesday orders. Track: average time from order to ship.',c:O},
+{t:'Cup test new coffee lot — document flavor notes, approve or reject',c:O},
+{t:'Pack 15 influencer sample kits — always have 20 ready to ship',c:O},
+{t:'B Corp: document environmental practices — solar drying %, water recapture, zero chemicals',c:B},
+{t:'Create packaging quality checklist: what every bag needs before it ships',c:O},
+{t:'Create FDA.gov account and gather all required company information',c:L}],
+THU:[
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Confirm second roaster can fulfill emergency orders within 5 business days',c:O},
+{t:'Follow up with lawyer: affiliate agreement review status',c:L},
+{t:'Update P&L: Week 4 actual vs $788 target — variance and reason',c:AC},
+{t:'B Corp: draft Workers section — Coordinadora de Campo job description and compensation',c:B},
+{t:'Build Week 4 operations report: packs shipped, on-time %, complaints, COGS/pack',c:O}],
+FRI:[
+{t:'Fulfill all orders — zero backlog entering weekend',c:O},
+{t:'Confirm inventory for Weeks 5–7: 170, 250, 340 packs — supply secured?',c:O},
+{t:'Packaging audit: every bag shows harvest date AND roast date — reject any that don\'t',c:O},
+{t:'Submit FDA food facility registration online today',c:L,f:'SUBMIT TODAY'},
+{t:'Add 25 more roasters to green coffee contact list — running total 60+',c:O},
+{t:'Research ICA transport permit: what triggers the need, what documents required',c:L}],
+SAT:[
+{t:'Pack all Monday orders in advance — ready to ship first thing Monday',c:O},
+{t:'Review fulfillment metrics: avg ship time, error rate, cost per shipment',c:O},
+{t:'B Corp: Community section — document relationship with farming families in Andes',c:B},
+{t:'Update green coffee one-pager with latest SCA score and cupping notes',c:O},
+{t:'Document NUNA dryer operating data: temperature, humidity, airflow, duration',c:B},
+{t:'Photograph your processing operation for B Corp visual evidence',c:B}],
+SUN:[
+{t:'⭐ REVIEW: 105 packs? $1,284 cumulative? Privacy Policy drafted? Affiliate agreement with lawyer?',c:BT},
+{t:'Legal checklist: FDA submitted ✓ Privacy Policy drafted ✓ Affiliate agreement in review ✓',c:L},
+{t:'B Corp tracker: Workers %, Environment %, Community % — estimated score so far?',c:B},
+{t:'Update P&L: COGS per pack, revenue per pack, net margin',c:AC},
+{t:'Plan Week 5: 170 packs target, 20 active influencers, subscription upsell test',c:BT},
+{t:'Write top 3 operational bottlenecks this week — fix before Monday',c:O}]},
+x:{
+MON:[
+{t:'Send 35 DMs — new targets + follow-ups. Push to 15 active influencer partners.',c:D},
+{t:'ClickFunnels: add first customer testimonial to offer page — real name, photo if possible',c:F},
+{t:'Publish Privacy Policy + Terms of Service links on ClickFunnels checkout page',c:F},
+{t:'Review influencer content calendar: who is posting this week? Remind them.',c:D},
+{t:'Review all email open rates — any sequence underperforming? Fix subject line.',c:F},
+{t:'Log Week 4 influencer metrics: posts live, link clicks, sales, commissions owed',c:D}],
+TUE:[
+{t:'Send 35 DMs. Which niche converts best — espresso owner, barista, or lifestyle?',c:D},
+{t:'Weekly P&L: actual vs $788 projection — flag if more than 10% below target',c:AC},
+{t:'ClickFunnels: test order bump CTR — what % of buyers take the add-on?',c:F},
+{t:'Send influencer newsletter: this week\'s results, top content tips, link click data',c:D},
+{t:'Update CAC calculation: is cost per activated influencer going up or down?',c:AC},
+{t:'Research: what are competitors offering influencers? Is your commission competitive?',c:D}],
+WED:[
+{t:'Send 35 DMs + follow up warm leads from Weeks 1–3 who went quiet',c:D},
+{t:'Email sequence review: subscription offer email — what is conversion rate?',c:F},
+{t:'ClickFunnels: set up downsell — if buyer declines upsell, offer smaller alternative',c:F},
+{t:'For top 5 influencers by engagement: send personal thank-you + bonus offer',c:D},
+{t:'Track: what % of buyers are converting to subscription? Target 30%+ by Week 12.',c:AC},
+{t:'Build content library: save best-performing influencer posts for future inspiration',c:D}],
+THU:[
+{t:'Send 35 DMs — any influencer 3 weeks since contact: final follow-up today',c:D},
+{t:'Accounting: COGS per order, CAC per influencer, net margin per pack',c:AC},
+{t:'ClickFunnels: is referral link on thank-you page generating traffic?',c:F},
+{t:'Check Stripe: failed subscription payments this week? Resolve them.',c:F},
+{t:'Review influencer leaderboard: top 5 by sales? Who is underperforming?',c:D},
+{t:'Create follow-up DM script for 7 days after sample delivery',c:D}],
+FRI:[
+{t:'Send 35 DMs — begin content calendar: what should influencers post in Weeks 5–8?',c:D},
+{t:'ClickFunnels: full funnel audit — where exactly are visitors dropping off? Fix top 1 leak.',c:F},
+{t:'Build Week 5 DM list: 300 new targets, organized by niche and engagement',c:D},
+{t:'Stripe payout: this week\'s revenue in your bank account?',c:AC},
+{t:'Review: subscription %, AOV, LTV — improving week over week?',c:AC},
+{t:'Plan influencer content push for Week 5: send brief to all active partners on Sunday',c:D}],
+SAT:[
+{t:'Send 35 DMs — target accounts that posted coffee content in the last 3 days',c:D},
+{t:'Respond to every DM reply within 1 hour today',c:D},
+{t:'Review influencer performance data: top 3 by revenue, bottom 3 by activity',c:D},
+{t:'ClickFunnels: mobile UX audit — fill the form on your own phone. Is it frictionless?',c:F},
+{t:'Build Week 5 influencer activation plan: who needs a push? Who needs replacing?',c:D},
+{t:'Write 3 new DM opener variations to test in Week 5',c:D}],
+SUN:[
+{t:'⭐ REVIEW: 15+ active influencers? P&L vs $1,284 cumulative. CAC trend improving?',c:BT},
+{t:'Send influencer weekly newsletter — results, content tips, leaderboard update',c:D},
+{t:'Queue Week 5 DM list: 300 targets ready, organized',c:D},
+{t:'Calculate subscription %: what % of this week\'s orders are recurring?',c:AC},
+{t:'Plan Week 5: 170 packs target, 20 active influencers, subscription upsell A/B test',c:BT},
+{t:'Update ClickFunnels offer page with any new social proof from this week',c:F}]}},
+5:{a:{
+MON:[
+{t:'Daily fulfillment — 15–25 orders/day. Ship before 2PM every day.',c:O},
+{t:'Sales tax registration: register in states where you have nexus',n:'Check with accountant which states apply',c:L},
+{t:'Confirm Colombia SAS NIT active — open Colombian business bank account',c:L},
+{t:'Implement shipping tracking email automation — customer notified when order ships',c:O},
+{t:'Update supply chain tracker: new lot data, farm names, process details',c:B},
+{t:'Research Colombian freight forwarder: get 3 written quotes for Medellín → Miami',c:O}],
+TUE:[
+{t:'Place large roasted coffee order to cover Weeks 7–9: 340+ packs',c:O},
+{t:'Cup test new coffee lot — reject if it does not meet SCA target',c:O},
+{t:'Document supply chain: every lot needs farm, harvest date, processing log',c:B},
+{t:'Draft B Corp Workers section: compensation structure, benefits, working conditions',c:B},
+{t:'Build Week 6 inventory plan: 250 packs needed — supply confirmed?',c:O},
+{t:'Follow up with lawyer: affiliate agreement — should be finished this week',c:L}],
+WED:[
+{t:'Fulfill all Wednesday orders by 2PM. Confirm tracking sent to all customers.',c:O},
+{t:'Begin green coffee sample preparation: vacuum-seal 1 lb per variety, label with SCA score',c:O},
+{t:'Document NUNA dryer operating parameters: temperatures, humidity, stage durations',c:B},
+{t:'Research: what does a U.S. specialty roaster need to see before buying green coffee?',c:O},
+{t:'B Corp: Environmental section — quantify solar energy % of drying process',c:B},
+{t:'Create green coffee data sheet: lot name, farm, altitude, variety, process, SCA score, $/lb',c:O}],
+THU:[
+{t:'Fulfill Thursday orders — zero backlog by 5PM',c:O},
+{t:'Identify Colombian export logistics partner (freight forwarder) — confirm they handle coffee',c:O},
+{t:'Research U.S. importer of record process and which customs brokers handle specialty coffee',c:L},
+{t:'Update P&L: Week 5 actual vs $1,275 weekly target',c:AC},
+{t:'B Corp: complete draft of Community section — farming community impact',c:B},
+{t:'Contact 3 potential Coordinadora de Campo candidates through local agricultural networks',c:O}],
+FRI:[
+{t:'Fulfill all orders — zero backlog entering weekend',c:O},
+{t:'Finalize top 100 U.S. roaster contact list — 100 names with full contact info before Week 8',c:O},
+{t:'Complete green coffee one-pager: origin, altitude, process, SCA score, flavor notes, $/lb',c:O},
+{t:'FDA food facility registration: confirm submission received — check for confirmation email',c:L},
+{t:'Begin ICA phytosanitary certificate process: list every step from cherry to export',c:L},
+{t:'Prepare green coffee sample kits: 10 full kits vacuum sealed, labeled, cupping notes attached',c:O}],
+SAT:[
+{t:'Pack all Monday orders in advance — zero delay on Monday morning',c:O},
+{t:'B Corp: Worker Impact section — Coordinadora de Campo role, salary, benefits, Brix bonus',c:B},
+{t:'Environmental certifications research: Rainforest Alliance, Organic — which adds most value?',c:B},
+{t:'Research SCA membership — useful for B Corp credibility with U.S. roasters',c:B},
+{t:'Add 20 more roasters to contact list — running total 80+ now',c:O},
+{t:'Document environmental certifications your mill currently qualifies for',c:B}],
+SUN:[
+{t:'⭐ REVIEW: 170 packs? $2,559 cumulative? 20+ active influencers?',c:BT},
+{t:'Update B Corp tracker: Workers, Environment, Community % — estimate your BIA score',c:B},
+{t:'P&L close: subscription %, CAC, blended margin, net profit for Month 2 so far',c:AC},
+{t:'Supply chain documentation: every lot from last 3 weeks fully logged?',c:B},
+{t:'Plan Week 6: 250 packs, 30 influencers, affiliate agreements finalized',c:BT},
+{t:'Write down what B Corp evidence you need to collect in next 6 weeks',c:B}]},
+x:{
+MON:[
+{t:'Send 35 DMs — push to 20 active influencer partners this week',c:D},
+{t:'Confirm subscription billing cycle works in Stripe — test a recurring charge',c:F},
+{t:'Add "subscription saves X%" messaging to upsell page — make savings explicit',c:F},
+{t:'Send Week 5 influencer newsletter: results, content calendar, leaderboard',c:D},
+{t:'Build Week 5 influencer content calendar: 1 theme per week — "freshness" this week',c:D},
+{t:'Review ClickFunnels email day-7 subscription offer — is it converting?',c:F}],
+TUE:[
+{t:'Send 35 DMs + follow up all warm leads from Weeks 2–4',c:D},
+{t:'Weekly P&L: Week 5 actual vs $1,275 weekly target',c:AC},
+{t:'Test 2 variations of subscription upsell copy — which converts better?',c:F},
+{t:'Review influencer performance: who drove actual sales this week vs who just posted?',c:D},
+{t:'Track subscription %: what % of all orders on recurring plan? Log it.',c:AC},
+{t:'Start weekly influencer newsletter: results, tips, content ideas, leaderboard ranking',c:D}],
+WED:[
+{t:'Send 35 DMs — prioritize influencers whose followers own espresso machines',c:D},
+{t:'Respond to all DM replies within 2 hours',c:D},
+{t:'ClickFunnels: add customer review widget — at least 3 verified reviews with photos',c:F},
+{t:'Brief active influencers: "freshness" angle — "roasted within 20 days of harvest" hook',c:D},
+{t:'Review email unsubscribe rate — above 2% per email? Fix subject line or content.',c:F},
+{t:'Update influencer leaderboard: posts, clicks, sales, commission this week',c:D}],
+THU:[
+{t:'Send 35 DMs. Weekly P&L check: on track for $2,559 cumulative?',c:D},
+{t:'ClickFunnels: referral link on thank-you page — how many referrals this week?',c:F},
+{t:'Check Stripe: subscription renewals — failed payments? Resolve same day.',c:F},
+{t:'Update CAC: cost per activated influencer, week over week trend',c:AC},
+{t:'Any influencer posting 2+ times/week: propose ambassador upgrade with higher commission',c:D},
+{t:'Analyze: which follower demographics convert best to buyers?',c:D}],
+FRI:[
+{t:'Send 35 DMs. 170 packs this week — check your daily pace, on track?',c:D},
+{t:'ClickFunnels: full analytics review — CTR, conversion, AOV, subscription %, LTV',c:F},
+{t:'Stripe: confirm payout received this week — matches revenue calculation?',c:AC},
+{t:'Build Week 6 DM list: 300 new targets, organized and ready',c:D},
+{t:'Prepare influencer content brief for Week 6: theme = "the freshness guarantee"',c:D},
+{t:'Any influencer 3+ weeks since sample kit and hasn\'t posted — replace them',c:D}],
+SAT:[
+{t:'Send 35 DMs — Saturday is peak reply day, send early',c:D},
+{t:'Engage publicly with every influencer post this week: comment, like, share story',c:D},
+{t:'ClickFunnels: review mobile conversion rate — within 10% of desktop?',c:F},
+{t:'Collect and organize all UGC from this week',c:D},
+{t:'Write 3 new DM opener variations for Week 6',c:D},
+{t:'Review: what is your best-performing influencer doing that others are not?',c:D}],
+SUN:[
+{t:'⭐ REVIEW: 170 packs? Subscription %? CAC trend? $2,559 cumulative?',c:BT},
+{t:'Send influencer newsletter: Week 5 results, leaderboard, Week 6 content theme',c:D},
+{t:'P&L close: blended margin, subscription % of revenue, CAC vs Month 1',c:AC},
+{t:'Queue Week 6 DM list: 300 targets ready by Monday 8AM',c:D},
+{t:'Plan Week 6: 250 packs, 30 influencers, affiliate agreements finalized',c:BT},
+{t:'Update B Corp tracker with this week\'s supply chain data',c:B}]}},
+6:{a:{
+MON:[
+{t:'Daily fulfillment — 25–35 orders/day. Ship before 2PM. Document any friction.',c:O},
+{t:'Send finalized affiliate agreement to all current influencer partners for signature',c:L},
+{t:'Submit FDA food facility registration if not done in Week 4 or 5',c:L},
+{t:'Confirm Colombia SAS NIT active and Colombian bank account open',c:L},
+{t:'Begin green coffee sample preparation: 1 lb vacuum-sealed per variety, labeled',c:O},
+{t:'Compile SCA cupping scores for each available green coffee lot — ready for roasters',c:O}],
+TUE:[
+{t:'Fulfill Tuesday orders — zero backlog by 2PM',c:O},
+{t:'Reorder roasted coffee to cover Weeks 8–10 at 430–520 packs/week',c:O},
+{t:'B Corp: complete Community Impact section — farming community relationships',c:B},
+{t:'Build Week 7 inventory plan: 340 packs — supply chain confirmed?',c:O},
+{t:'Contact 3 freight forwarder companies — request written quotes for green coffee route',c:O},
+{t:'Research Colombian INVIMA food export certification — begin gathering requirements',c:L}],
+WED:[
+{t:'Fulfill Wednesday orders. Confirm carrier handling volume without delays.',c:O},
+{t:'Finalize green coffee one-pager: origin, SCA score, process, $/lb, your story',c:O},
+{t:'Prepare 15 green coffee sample kits — vacuum sealed, labeled, cupping notes, one-pager inside',c:O},
+{t:'B Corp: Environmental section — solar %, zero chemicals, water practices documented',c:B},
+{t:'Create green coffee data sheets: all variables a roaster needs to evaluate',c:O},
+{t:'Research: what certifications (SCA, Rainforest Alliance, Organic) add most value?',c:B}],
+THU:[
+{t:'Fulfill Thursday orders — zero backlog by 5PM',c:O},
+{t:'Finalize top 50 U.S. roaster list for Week 8: name, city, IG handle, email, phone',c:O},
+{t:'Update P&L: Week 6 actual vs $1,875 weekly target',c:AC},
+{t:'Follow up with customs broker prospects — who specializes in specialty green coffee?',c:L},
+{t:'Photograph green coffee samples with professional lighting — for outreach materials',c:O},
+{t:'Research: what does a specialty roaster look for in a Colombian green coffee supplier?',c:O}],
+FRI:[
+{t:'Fulfill all orders — zero backlog entering weekend',c:O},
+{t:'Complete green coffee outreach materials: one-pager, sample kit, cupping notes, pricing sheet',c:O},
+{t:'B Corp: Governance section — document dual-entity structure US LLC + Colombia SAS',c:B},
+{t:'Review ICA phytosanitary process: do you have all documents needed for first green export?',c:L},
+{t:'Confirm inventory for Weeks 8–12: 430, 520, 620, 720, 800 packs — all secured?',c:O},
+{t:'Draft green coffee price offer: $5.50–$6.00/lb depending on SCA score and volume',c:O}],
+SAT:[
+{t:'Pack all Monday orders in advance',c:O},
+{t:'B Corp: complete first complete BIA draft — all 5 sections with best available data',c:B},
+{t:'Add 20 more roasters to contact list — running total 90+ now',c:O},
+{t:'Review green coffee sample kits: presentation quality? Would you be impressed?',c:O},
+{t:'Document full processing chain for B Corp: cherry → fermentation → drying → resting → Q-lab',c:B},
+{t:'Create green coffee outreach DM script — what you will say to a roaster in first message',c:O}],
+SUN:[
+{t:'⭐ REVIEW: 250 packs? $4,434 cumulative? 30+ influencers? Green samples ready?',c:BT},
+{t:'BIA first complete draft: review with Alex — what sections need more data?',c:B},
+{t:'P&L close: Month 2 revenue, COGS, net margin, CAC, subscription %',c:AC},
+{t:'Confirm: green one-pager ✓ sample kits ✓ top 50 roaster list ✓ price sheet ✓',c:O},
+{t:'Plan Week 7: 340 packs, 40 influencers, affiliate agreements signed, Week 8 go/no-go',c:BT},
+{t:'Legal checklist: FDA confirmed ✓ Affiliate agreements sent ✓ INVIMA research started ✓',c:L}]},
+x:{
+MON:[
+{t:'Send 35 DMs — push toward 30 active influencer partners by end of week',c:D},
+{t:'Full ClickFunnels funnel audit: map every step, identify every drop-off, fix top leak',c:F},
+{t:'ClickFunnels: add "B Corp certification in progress" to offer page — builds trust',c:F},
+{t:'Confirm all affiliate commission rates calculating correctly in Stripe',c:F},
+{t:'Send influencer newsletter: Week 6 results, leaderboard, "freshness guarantee" theme',c:D},
+{t:'Build 4-week influencer content calendar: freshness → origin → barista technique → unboxing',c:D}],
+TUE:[
+{t:'Send 35 DMs + follow up warm leads from Weeks 3–5 who went quiet',c:D},
+{t:'Top 5 influencers by revenue: send personal message + exclusive early access offer',c:D},
+{t:'Weekly P&L: Week 6 actual vs $1,875 target',c:AC},
+{t:'Subscription email sequence: what is conversion rate on each email?',c:F},
+{t:'Build influencer leaderboard update — post it in the newsletter',c:D},
+{t:'Research: what subscription retention tactics work in D2C coffee? Pick 2 to test.',c:F}],
+WED:[
+{t:'Send 35 DMs. New hook: "harvested within 20 days of roasting"',c:D},
+{t:'ClickFunnels: A/B test subscription upsell — "save 15%" vs "never run out"',c:F},
+{t:'Review influencer content: who posted this week? View counts and link clicks?',c:D},
+{t:'Brief influencers: "freshness one-pager" as content — specific talking points',c:D},
+{t:'Track email list growth: how many new subscribers this week?',c:F},
+{t:'Review: are influencer posts using affiliate link correctly? Check for broken links.',c:D}],
+THU:[
+{t:'Send 35 DMs — any influencer 3+ weeks since contact: final follow-up today',c:D},
+{t:'Accounting: COGS trajectory — on track for $49/pack at Week 8?',c:AC},
+{t:'ClickFunnels: AOV trend — is order bump adding meaningful revenue?',c:F},
+{t:'Check Stripe: subscription renewals — churn rate this week?',c:F},
+{t:'What is your LTV estimate for a subscription customer at 3 months?',c:AC},
+{t:'Update DM tracker: total sent to date, cumulative reply rate, conversion rate',c:D}],
+FRI:[
+{t:'Send 35 DMs. 250 packs this week — on track by mid-day?',c:D},
+{t:'ClickFunnels: review referral program — how many referrals this week?',c:F},
+{t:'Stripe: confirm affiliate payouts accurate for every active influencer',c:AC},
+{t:'Build Week 7 DM list: 300 new targets ready',c:D},
+{t:'Prepare influencer content brief for Week 7: theme = "the origin story"',c:D},
+{t:'Review offer page: has adding social proof improved conversion rate vs Week 3?',c:F}],
+SAT:[
+{t:'Send 35 DMs — target accounts posting espresso or barista content this week',c:D},
+{t:'Engage publicly with all influencer posts: comment authentically, share to story',c:D},
+{t:'Collect and organize all UGC from this week',c:D},
+{t:'Subscription % of total orders: if below 20%, diagnose and fix the upsell',c:AC},
+{t:'Write 3 new DM opener variations for Week 7',c:D},
+{t:'ClickFunnels: 5-second test — ask someone new to review your offer page',c:F}],
+SUN:[
+{t:'⭐ REVIEW: 250 packs? $4,434 cumulative? 30+ influencers? Subscription % growing?',c:BT},
+{t:'Send Week 6 influencer newsletter: results, leaderboard, Week 7 content theme',c:D},
+{t:'Month 2 P&L close: revenue, COGS, net, CAC, subscription %, LTV estimate',c:AC},
+{t:'Queue Week 7 DM list: 300 targets ready',c:D},
+{t:'Plan Week 7: 340 packs, 40 influencers, final scale prep',c:BT},
+{t:'Goal: 40 active influencers by Sunday Week 7 — track daily',c:D}]}},
+7:{a:{
+MON:[
+{t:'Fulfill orders — 30–45/day. Confirm logistics can handle Week 8 jump to 430 packs.',c:O},
+{t:'Finalize green coffee outreach list: 100 U.S. roasters with IG, email, DM handle',c:O},
+{t:'Place large roasted coffee order for Weeks 8–11 at 430–720 packs/week scale',c:O},
+{t:'ICA Colombia: document full interdepartmental transport permit process step by step',c:L},
+{t:'Set up green coffee order tracker: roaster, sample sent date, follow-up date, status',c:O},
+{t:'Confirm Colombia SAS + NIT + Colombian bank account all fully operational',c:L}],
+TUE:[
+{t:'Fulfill Tuesday orders — zero backlog by 2PM',c:O},
+{t:'Contact customs broker — get written quote for green coffee import documentation',c:L},
+{t:'Post Coordinadora de Campo job listing on LinkedIn and local agricultural networks',c:O},
+{t:'Ship first 5 green coffee sample packages to top roaster prospects',c:O,f:'FIRST GREEN SAMPLES'},
+{t:'Complete internal BIA first draft — all 5 sections, best data available',c:B},
+{t:'Identify 1 B Lab certified consultant in Colombia from bcorporation.net directory',c:B}],
+WED:[
+{t:'Fulfill Wednesday orders. Confirm zero backlog before Week 8 volume increase.',c:O},
+{t:'Ship 5 more green coffee samples — second batch of roasters on your list',c:O},
+{t:'Follow up: roasters who received samples in Week 6 — did they arrive? When will they cup?',c:O},
+{t:'Review BIA draft: score yourself honestly — what sections need more documentation?',c:B},
+{t:'Confirm freight forwarder selection: signed agreement for green exports',c:O},
+{t:'Build green coffee pricing model: cost/lb at origin, freight, broker fee, margin/lb',c:AC}],
+THU:[
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Review Coordinadora de Campo applications — shortlist top 3 candidates',c:O},
+{t:'Research U.S. importer of record requirements — documents needed for compliance',c:L},
+{t:'Update P&L: Week 7 actual vs $2,550 — last week at $7.50 margin',c:AC},
+{t:'Review green coffee one-pager: ready to impress a professional specialty roaster?',c:O},
+{t:'B Corp: review BIA draft with Alex — identify 5 areas to improve before submission',c:B}],
+FRI:[
+{t:'Fulfill all orders — enter weekend with zero backlog',c:O},
+{t:'Confirm ALL inventory ready for Week 8: 430+ packs physically on hand by Monday',c:O},
+{t:'Send green coffee samples batch 3 — 5 more roasters',c:O},
+{t:'Legal audit Weeks 1–7: LLC ✓ EIN ✓ Bank ✓ Trademark filed ✓ FDA confirmed ✓ Affiliate agreements ✓',c:L},
+{t:'Review ICA process: can you handle 200 lbs export by Week 13? What is missing?',c:L},
+{t:'Prepare Coordinadora de Campo interview questions and evaluation criteria',c:O}],
+SAT:[
+{t:'Pack all Monday orders — 430 packs/week starts Monday Week 8, be ready',c:O},
+{t:'B Corp: implement top 5 BIA improvements before Week 8 submission',c:B},
+{t:'Add final 10 roasters to contact list — you need 100 confirmed before Monday',c:O},
+{t:'Create green coffee outreach tracker: 35 DMs/day starting Monday, log every contact',c:O},
+{t:'Photograph green coffee sample kits — professional quality for B Corp and social proof',c:B},
+{t:'Review all legal documents: organized, signed, and filed correctly in Google Drive?',c:L}],
+SUN:[
+{t:'⭐ REVIEW: 340 packs? $6,984 cumulative? 40+ influencers? 15+ green samples sent?',c:BT,f:'GO/NO-GO'},
+{t:'GO/NO-GO: inventory ✓ logistics ✓ $18 margin confirmed ✓ green outreach ready ✓',c:O},
+{t:'Legal audit Weeks 1–7: all items resolved and documented',c:L},
+{t:'BIA draft reviewed and ready for Week 8 Thursday submission?',c:B},
+{t:'Brief Alex: Phase 1→2 Monday. $18 margin live. Alejandro opens green outreach.',c:BT},
+{t:'Set Week 8 targets: 430 packs, $7,740 profit, 20+ roasters DM\'d for green coffee',c:BT}]},
+x:{
+MON:[
+{t:'Send 35 DMs — final push to 40 active influencers. Last week before scale.',c:D},
+{t:'ClickFunnels: update product pricing so $18 margin goes live automatically Monday Week 8',c:F},
+{t:'Set up second Stripe product SKU for green coffee B2B invoicing — test it today',c:F},
+{t:'Brief active influencers: volume is picking up, stay consistent, quality matters',c:D},
+{t:'Send influencer newsletter: Week 7 results, leaderboard, "origin story" content theme',c:D},
+{t:'Review email list: segment buyers vs non-buyers — prepare different email tracks',c:F}],
+TUE:[
+{t:'Send 35 DMs + follow up warm leads from Weeks 4–6',c:D},
+{t:'Weeks 1–7 complete P&L: actual vs projected, every week, all variances explained',c:AC},
+{t:'ClickFunnels: test subscription upsell at high order volumes — does it break anything?',c:F},
+{t:'Prepare influencer onboarding kit for new partners joining Week 8+',c:D},
+{t:'Review: which influencer onboarding steps have been missed? Fix for all current partners.',c:D},
+{t:'Confirm all Stripe affiliate commission calculations correct for all 40 influencers',c:F}],
+WED:[
+{t:'Send 35 DMs. Push every active influencer to post at least once this week.',c:D},
+{t:'ClickFunnels: A/B test offer page hero image — product vs lifestyle photography',c:F},
+{t:'Build Month 3 content plan: 4 weekly themes mapped out in advance',c:D},
+{t:'Review email sequence metrics: open, click, conversion for every email',c:F},
+{t:'Document influencer ROI: revenue generated vs commission paid per active partner',c:D},
+{t:'Identify top 3 influencers to feature prominently — they will anchor Week 8 scale',c:D}],
+THU:[
+{t:'Send 35 DMs. Prepare comprehensive influencer welcome kit for Week 8+ onboarding.',c:D},
+{t:'Weeks 1–7 P&L final: every line accurate, filed in Drive, shared with Alejandro',c:AC},
+{t:'Verify referral program works at scale — test 2 simultaneous referral links',c:F},
+{t:'Subscription churn rate over last 4 weeks — under 5%/month?',c:AC},
+{t:'Review BIA draft with Alejandro: what financial data is needed for submission?',c:B},
+{t:'Set up B Corp financial tracking: wages paid, sourcing costs, community investment log',c:B}],
+FRI:[
+{t:'Send 35 DMs. 340 packs this week — final week at $7.50 margin. Hit the number.',c:D},
+{t:'ClickFunnels: pre-Week 8 funnel audit — everything working perfectly?',c:F},
+{t:'Stripe: confirm $18 margin price update scheduled and goes live Monday',c:F},
+{t:'Build Week 8 DM list: 300 new targets ready',c:D},
+{t:'Brief influencers: new margin unlocks better commissions — get them motivated',c:D},
+{t:'Review: LTV of subscription customer at Month 2 — what does the math say?',c:AC}],
+SAT:[
+{t:'Send 35 DMs — reach 40 active influencers before Sunday review',c:D},
+{t:'Send personal thank-you to top 5 influencers this month',c:D},
+{t:'ClickFunnels: review entire email sequence one final time before Week 8 scale',c:F},
+{t:'Collect and organize all UGC from Week 7',c:D},
+{t:'Write 3 new DM opener variations for Week 8',c:D},
+{t:'Update influencer leaderboard — prepare final Week 7 leaderboard for Sunday newsletter',c:D}],
+SUN:[
+{t:'⭐ REVIEW: 340 packs? $6,984 cumulative? 40+ influencers? GO/NO-GO for Week 8.',c:BT},
+{t:'Send Week 7 influencer newsletter: final results, leaderboard, Week 8 expectations',c:D},
+{t:'Confirm Stripe: $18 margin live Monday — test product price one more time',c:F},
+{t:'Phase 1→2 brief: Alex DMs stay at 35/day, Alejandro opens green coffee outreach Monday',c:BT},
+{t:'Queue Week 8 DM list: 300 targets ready and organized',c:D},
+{t:'Clear Week 8 targets: 430 packs, $7,740 weekly profit, $14,724 cumulative',c:BT}]}},
+8:{a:{
+MON:[
+{t:'Send first 35 DMs to U.S. specialty roasters — green coffee outreach opens today',c:O,f:'GREEN OPENS'},
+{t:'Fulfillment jumps to ~430 packs/week — confirm logistics are ready',c:O},
+{t:'Log every green DM: roaster name, city, IG handle, sent date, reply status',c:O},
+{t:'Respond to any roaster reply within 2 hours — speed signals professionalism',c:O},
+{t:'Submit BIA first draft to bcorporation.net — begin formal B Corp process',c:B,f:'B CORP STARTS'},
+{t:'Confirm freight forwarder agreement signed and Miami port routing confirmed',c:O}],
+TUE:[
+{t:'35 green roaster DMs — new targets. Any replies from Monday? Book sample shipment today.',c:O},
+{t:'Fulfill all Tuesday orders — 60+ orders/day pace begins this week',c:O},
+{t:'Confirm Colombia SAS + NIT fully active — verify with accountant or notary',c:L},
+{t:'Review green coffee pricing model: confirm $5.50–$6.00/lb is competitive for SCA 87+',c:O},
+{t:'Schedule Coordinadora de Campo interviews this week — must hire by Week 12',c:O},
+{t:'Document B Corp submission: date submitted, confirmation received, feedback timeline',c:B}],
+WED:[
+{t:'35 green roaster DMs — follow up Day 2 contacts',c:O},
+{t:'Ship green coffee samples to first batch of interested roasters — cupping notes + one-pager',c:O},
+{t:'Fulfill Wednesday orders — is current setup sustainable at 60+ orders/day?',c:O},
+{t:'Interview Coordinadora de Campo candidates — evaluate field experience and Brix knowledge',c:O},
+{t:'Confirm phytosanitary certificate process — do you know every step by heart?',c:L},
+{t:'B Corp: document Community section — farmer names, farms, prices paid above market',c:B}],
+THU:[
+{t:'35 green roaster DMs — log every reply, sample request, price question',c:O},
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Contact 3 U.S. customs brokers — who handles specialty coffee imports? Get references.',c:L},
+{t:'Update P&L: Week 8 actual vs $7,740 target — first week at $18 margin',c:AC},
+{t:'Ship green coffee samples batch 2 — 10 new roasters',c:O},
+{t:'Coordinadora de Campo: make hiring decision — send offer letter if top candidate is ready',c:O}],
+FRI:[
+{t:'35 green roaster DMs — follow up all Day 4–5 contacts',c:O},
+{t:'Fulfill all orders — zero backlog entering weekend',c:O},
+{t:'Green coffee follow-up: any roasters who received samples? Request feedback call.',c:O},
+{t:'Customs broker: request written proposal for green coffee import documentation',c:L},
+{t:'Review: are you generating green coffee leads? Adjust DM pitch if reply rate below 5%.',c:O},
+{t:'Confirm inventory for Weeks 9–12 at 520–800 packs — fully secured?',c:O}],
+SAT:[
+{t:'35 green roaster DMs — weekend roasters are active on Instagram',c:O},
+{t:'Ship green coffee samples batch 3 — 10 more roasters',c:O},
+{t:'B Corp: Environment section — solar energy %, water use, zero chemicals documented',c:B},
+{t:'Pack all Monday orders in advance',c:O},
+{t:'Review green coffee tracker: contacted, replied, samples sent, negotiating, closed',c:O},
+{t:'Document: what is your 48-hour fulfillment process once a green coffee order is placed?',c:O}],
+SUN:[
+{t:'⭐ REVIEW: 430 packs? $14,724 cumulative? Green samples sent to 20+ roasters?',c:BT},
+{t:'Green tracker: replies received, sample requests, price inquiries — categorize by stage',c:O},
+{t:'Update P&L: first $18 margin week — actual vs $7,740. What drove the variance?',c:AC},
+{t:'Legal: customs broker engaged ✓ B Corp submitted ✓ ICA process documented ✓',c:L},
+{t:'Plan Week 9: 520 packs, 60+ roasters contacted, first green price negotiations',c:BT},
+{t:'B Corp progress: estimated BIA score? Gap to 80 points?',c:B}]},
+x:{
+MON:[
+{t:'Confirm $18 margin live in Stripe — run a test purchase and verify',c:F,f:'$18 MARGIN'},
+{t:'Send 35 DMs — influencer channel continues at full pace alongside green launch',c:D},
+{t:'ClickFunnels: update all pricing references on offer page to reflect $18 margin',c:F},
+{t:'Send influencer newsletter: Week 8 — new margin means better commissions for everyone',c:D},
+{t:'Brief all 40 active influencers: this is the scale phase, consistency is everything',c:D},
+{t:'Set up B Corp financial tracking: wages, sourcing, community investment columns in accounting',c:B}],
+TUE:[
+{t:'Send 35 DMs — new targets plus follow up warm leads from Weeks 5–7',c:D},
+{t:'Review Stripe: every new order at $18 margin — confirm no orders at old pricing',c:F},
+{t:'ClickFunnels: launch re-engagement email sequence for non-buyers on the list',c:F},
+{t:'Log Week 8 CAC: cost per activated influencer — improving?',c:AC},
+{t:'Update influencer content brief: new talking point — "freshness that pays" messaging',c:D},
+{t:'Research: which new influencer niches could drive higher conversion? Test 1 new niche.',c:D}],
+WED:[
+{t:'Send 35 DMs + brief all active influencers: post at least once this week',c:D},
+{t:'Email list: launch re-engagement sequence for subscribers who have not bought yet',c:F},
+{t:'Review influencer posts live this week — screenshot, save, share with permission',c:D},
+{t:'Track subscription revenue vs one-time revenue split this week',c:AC},
+{t:'Any influencer posting 3+ times/week: propose ambassador upgrade with 5% bonus commission',c:D},
+{t:'ClickFunnels: exit-intent popup test — does it recover abandoning visitors?',c:F}],
+THU:[
+{t:'Send 35 DMs. Log financials: $7,740 weekly target — on pace?',c:AC},
+{t:'Stripe: confirm weekly payout — matches your order volume calculation?',c:F},
+{t:'Review ClickFunnels analytics: after pricing update, did conversion rate change?',c:F},
+{t:'Update influencer leaderboard: who is generating most revenue at $18 margin?',c:D},
+{t:'Begin 1099 tracking: log every influencer commission payout from this week forward',c:AC},
+{t:'Are any influencers promoting competitor brands? Monitor and address.',c:D}],
+FRI:[
+{t:'Send 35 DMs. Push to 55+ active influencer partners this week.',c:D},
+{t:'ClickFunnels: subscription retention — any cancellations? Find out the reason.',c:F},
+{t:'Stripe: reconcile weekly revenue — actual vs target, log the variance',c:AC},
+{t:'Build Week 9 DM list: 300 new targets ready',c:D},
+{t:'Prepare Week 9 influencer content brief: theme = "the 20-day freshness promise"',c:D},
+{t:'LTV calculation update — subscription customers at 1 month vs 2 months',c:AC}],
+SAT:[
+{t:'Send 35 DMs — Saturday peak engagement, maximize outreach',c:D},
+{t:'Collect best UGC from this week — organize in social proof folder',c:D},
+{t:'ClickFunnels: add green coffee interest capture to thank-you page — start B2B leads',c:F},
+{t:'Review: which influencer content format is driving most Stripe revenue this week?',c:D},
+{t:'Engage publicly with every influencer post this week',c:D},
+{t:'Write 3 new DM opener variations for Week 9',c:D}],
+SUN:[
+{t:'⭐ REVIEW: 430 packs? $14,724 cumulative? First $18 margin week — actual vs $7,740?',c:BT},
+{t:'Send Week 8 influencer newsletter: results, leaderboard, Week 9 content theme',c:D},
+{t:'P&L close: first $18 margin week documented. Subscription % this week?',c:AC},
+{t:'Queue Week 9 DM list: 300 new targets ready',c:D},
+{t:'Plan Week 9: 520 packs, 60 active influencers, first green price negotiations',c:BT},
+{t:'Review: B Corp submission sent. Acknowledgment received from B Lab?',c:B}]}},
+9:{a:{
+MON:[
+{t:'35 green roaster DMs — Day 4+ follow-up for all Week 8 contacts who have not replied',c:O},
+{t:'Fulfillment at 520 packs/week — any carrier delays or bottlenecks? Address today.',c:O},
+{t:'Any roaster requesting price quote? Prepare formal offer: $5.50–$6.00/lb today.',c:O},
+{t:'Customs broker formal engagement: send written scope of work, request proposal',c:L},
+{t:'Coordinadora de Campo: start onboarding if hired — Week 1 field training schedule',c:O},
+{t:'Review BIA submission: has B Lab acknowledged receipt?',c:B}],
+TUE:[
+{t:'35 green roaster DMs — new targets from your top 100 list',c:O},
+{t:'Fulfill all Tuesday orders by 2PM',c:O},
+{t:'First informal price conversation with interested roaster — confirm price, volume, terms',c:O},
+{t:'U.S. importer of record process: begin formal documentation with customs broker',c:L},
+{t:'B Corp: get preliminary BIA score estimate — gap to 80 points?',c:B},
+{t:'Submit INVIMA food export certification application in Colombia',c:L}],
+WED:[
+{t:'35 green roaster DMs + ship batch 4 of green coffee samples — 10 new roasters',c:O},
+{t:'Fulfill Wednesday orders',c:O},
+{t:'Green coffee follow-up: roasters who received samples 5+ days ago — request tasting notes',c:O},
+{t:'B Corp: engage B Lab consultant from the directory — schedule gap analysis session',c:B},
+{t:'Update green coffee tracker: contacted, replied, sampled, negotiating, closed',c:O},
+{t:'Freight forwarder: confirm Medellín → Miami routing with costs and timeline in writing',c:O}],
+THU:[
+{t:'35 green roaster DMs — focus on SCA 85+ buyers and competition roasters this week',c:O},
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Update P&L: Week 9 actual vs $9,360 weekly target',c:AC},
+{t:'B Corp: complete formal gap analysis with consultant — document the output in full',c:B},
+{t:'Document Coordinadora de Campo compensation: base salary, Brix bonus, benefits, ICA training',c:B},
+{t:'Build green coffee client pipeline: Tier 1 (ready to close), Tier 2 (interested), Tier 3 (cold)',c:O}],
+FRI:[
+{t:'35 green roaster DMs — follow up all this week\'s contacts',c:O},
+{t:'Fulfill all orders — zero backlog by 3PM',c:O},
+{t:'Confirm enough inventory for Week 10 jump to 620 packs',c:O},
+{t:'Prepare green coffee contract template with lawyer — needed before first deal closes',c:L},
+{t:'B Corp: implement top 3 gap analysis recommendations — document changes made',c:B},
+{t:'Review: is first green coffee deal close? What is the sticking point?',c:O}],
+SAT:[
+{t:'35 green roaster DMs — Saturday specialty roasters active on IG',c:O},
+{t:'Pack all Monday orders in advance',c:O},
+{t:'B Corp: Worker Impact revision — add Coordinadora de Campo with full compensation data',c:B},
+{t:'Supply chain documentation: every lot from Weeks 7–9 fully documented',c:B},
+{t:'Research: what is the standard green coffee contract structure in U.S. specialty market?',c:L},
+{t:'Build green pipeline: which roasters are closest to placing first order?',c:O}],
+SUN:[
+{t:'⭐ REVIEW: 520 packs? $24,084 cumulative? 60+ roasters contacted for green?',c:BT},
+{t:'Green tracker: who is closest to closing? What do they need to say yes?',c:O},
+{t:'Update P&L: subscription % of revenue — target 30%+ by Week 12',c:AC},
+{t:'Legal: INVIMA submitted ✓ Customs broker engaged ✓ Contract template ready ✓',c:L},
+{t:'Plan Week 10: 620 packs, first green deal to close, Coordinadora de Campo on board',c:BT},
+{t:'B Corp update: estimated score after gap analysis? Path to 80 points?',c:B}]},
+x:{
+MON:[
+{t:'Send 35 DMs — push to 60 active influencer partners this week',c:D},
+{t:'ClickFunnels: add green coffee interest capture form to thank-you page',c:F},
+{t:'Send influencer newsletter: Week 9 results, leaderboard, "origin story" content theme',c:D},
+{t:'Bottom 10% of influencers by revenue — replace or give 2-week improvement notice',c:D},
+{t:'ClickFunnels: exit-intent popup performance — sessions recovered vs abandoned?',c:F},
+{t:'Track B Corp financial data: wages paid to date, sourcing costs, community investment',c:B}],
+TUE:[
+{t:'Send 35 DMs + follow up all warm leads from Weeks 6–8',c:D},
+{t:'Cash flow forecast: 8-week rolling projection — funded for roaster restock at scale?',c:AC},
+{t:'Test new email subject lines — which gets highest open rate for subscription offer?',c:F},
+{t:'Update influencer leaderboard with Week 9 data',c:D},
+{t:'Build influencer replacement pipeline: always have 20 prospects ready to activate',c:D},
+{t:'CAC this month vs Month 1 — improving? What is driving the change?',c:AC}],
+WED:[
+{t:'Send 35 DMs. Test pitch: "B Corp certification in progress — partner with a values brand."',c:D},
+{t:'ClickFunnels: build email sequence for green coffee B2B leads',c:F},
+{t:'Brief active influencers: "20-day freshness promise" as content hook this week',c:D},
+{t:'Review influencer posts: view counts, link clicks, Stripe revenue — who drives real results?',c:D},
+{t:'ClickFunnels: mobile conversion audit — within 10% of desktop?',c:F},
+{t:'Research: which 10 new influencer accounts posted viral coffee content this month?',c:D}],
+THU:[
+{t:'Send 35 DMs. Weekly P&L: $24,084 cumulative target — on track?',c:AC},
+{t:'Stripe: reconcile all payouts — affiliate commissions paid correctly?',c:F},
+{t:'Review subscription churn: any patterns in who cancels? Address root cause.',c:AC},
+{t:'ClickFunnels: referral program — how many referrals generated this month?',c:F},
+{t:'Update 1099 tracker: every influencer commission logged',c:AC},
+{t:'Build Month 3 influencer content calendar: 4-week themes planned in advance',c:D}],
+FRI:[
+{t:'Send 35 DMs. 520 packs/week target — confirm you are on pace mid-day.',c:D},
+{t:'ClickFunnels: plan seasonal promotions 4 weeks in advance',c:F},
+{t:'Stripe: weekly payout confirmed — matches order volume?',c:AC},
+{t:'Build Week 10 DM list: 300 new targets ready',c:D},
+{t:'Prepare Week 10 influencer brief: theme = "your morning ritual, our obsession"',c:D},
+{t:'LTV of subscription customers vs one-time buyers — is subscription LTV 3x+?',c:AC}],
+SAT:[
+{t:'Send 35 DMs — Saturday peak, maximize outreach',c:D},
+{t:'Collect and organize all UGC from this week',c:D},
+{t:'Review ClickFunnels offer page: after 9 weeks, what does your top traffic source see first?',c:F},
+{t:'Engage publicly with all influencer posts this week',c:D},
+{t:'Write 3 new DM openers for Week 10',c:D},
+{t:'Are any influencers promoting competitor brands? Address it.',c:D}],
+SUN:[
+{t:'⭐ REVIEW: 520 packs? $24,084 cumulative? Subscription %: target 30%+ by Week 12.',c:BT},
+{t:'Send Week 9 influencer newsletter: results, leaderboard, Week 10 theme',c:D},
+{t:'P&L close: CAC trend, subscription %, LTV estimate, gross margin — all documented',c:AC},
+{t:'Queue Week 10 DM list: 300 targets ready',c:D},
+{t:'Plan Week 10: 620 packs, 65 influencers, first green deal to close',c:BT},
+{t:'Update B Corp financial tracker with Month 2 data',c:B}]}},
+10:{a:{
+MON:[
+{t:'35 green roaster DMs — anyone who received samples 2+ weeks ago: call them directly today',c:O},
+{t:'Fulfillment at 620 packs/week — any bottlenecks in shipping setup? Fix this week.',c:O},
+{t:'Coordinadora de Campo: if hired, complete Week 2 field training — cherry Brix standards',c:O},
+{t:'Green coffee contract template: finalize with lawyer — ready to sign first deal',c:L},
+{t:'Confirm INVIMA application received — follow up with Colombian health authority',c:L},
+{t:'Review B Corp gap analysis output: which 3 improvements have biggest impact on score?',c:B}],
+TUE:[
+{t:'35 green roaster DMs — new targets plus all Week 8 follow-ups at Day 14',c:O},
+{t:'Fulfill Tuesday orders by 2PM',c:O},
+{t:'Customs broker: request draft of first green coffee import documentation package',c:L},
+{t:'Coordinadora de Campo final hiring decision — if not yet hired, this is the deadline week',c:O},
+{t:'B Corp: implement top 3 improvements from gap analysis — document evidence of change',c:B},
+{t:'Update green coffee pricing: does $5.50–$6.00/lb generate enough margin at Miami landed cost?',c:AC}],
+WED:[
+{t:'First serious green coffee negotiation: price, volume, payment terms, delivery timeline',c:O,f:'FIRST DEAL'},
+{t:'Fulfill Wednesday orders — 90+ orders/day pace',c:O},
+{t:'Freight forwarder: confirm Miami port routing and customs process document',c:O},
+{t:'35 more green roaster DMs — running total 100+ roasters contacted',c:O},
+{t:'B Corp: finalize Workers section with Coordinadora de Campo compensation data',c:B},
+{t:'Review: is your green coffee logistics chain ready to ship 200 lbs in Week 13?',c:O}],
+THU:[
+{t:'35 green roaster DMs — follow up all Week 10 contacts',c:O},
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Update P&L: Week 10 actual vs $11,160 weekly target',c:AC},
+{t:'ICA phytosanitary certificate: begin formal application for first export lot',c:L},
+{t:'B Corp: BIA second revision — incorporate all gap analysis improvements',c:B},
+{t:'Document Coordinadora de Campo first field report: lot quality, Brix readings, volume',c:B}],
+FRI:[
+{t:'Fulfill all orders — zero backlog by 3PM',c:O},
+{t:'Follow up green deal in negotiation: push for signed contract and deposit this week',c:O},
+{t:'Confirm inventory for Weeks 11–14 at 720–800 packs — secured?',c:O},
+{t:'Legal update: ICA filed ✓ INVIMA in process ✓ Customs broker confirmed ✓',c:L},
+{t:'B Corp: peer research — what BIA scores do comparable specialty coffee companies have?',c:B},
+{t:'Pack Monday orders in advance',c:O}],
+SAT:[
+{t:'35 green roaster DMs — Saturday outreach, high reply rate from craft roasters',c:O},
+{t:'B Corp: environmental data quantified — solar kWh saved, water reused, kg CO2 avoided',c:B},
+{t:'Supply chain documentation: Weeks 8–10 lots fully documented for B Corp',c:B},
+{t:'Coordinadora de Campo: document performance evaluation framework — Brix targets, quality grades',c:O},
+{t:'Review: at current green outreach pace, will you close enough to hit 200 lbs in Week 13?',c:O},
+{t:'Research SCA membership — networking value for both B Corp and roaster credibility',c:B}],
+SUN:[
+{t:'⭐ REVIEW: 620 packs? $35,244 cumulative? First green deal closed or imminent?',c:BT},
+{t:'Green pipeline review: Tier 1 (ready), Tier 2 (interested), Tier 3 (cold)',c:O},
+{t:'Legal: all compliance documents filed and organized — no gaps',c:L},
+{t:'B Corp: estimated BIA score after revisions? Remaining gap to 80 points?',c:B},
+{t:'Plan Week 11: 720 packs, first green order confirmed, 70+ influencers',c:BT},
+{t:'Month 3 midpoint: on track for $48,204 cumulative by Week 11?',c:AC}]},
+x:{
+MON:[
+{t:'Send 35 DMs — target 65 active partners. Start 1099 tracker for all payouts.',c:D},
+{t:'ClickFunnels: Month 3 optimization sprint — top 3 data-driven changes this week',c:F},
+{t:'Send influencer newsletter: Week 10 results, leaderboard, new content theme',c:D},
+{t:'Review Month 3 influencer cohort performance — who joined Month 3 vs Month 1?',c:D},
+{t:'ClickFunnels: email list segmentation — buyers by purchase count, subscription vs one-time',c:F},
+{t:'Track B Corp financial data: wages, sourcing, community investment — Month 3 totals',c:B}],
+TUE:[
+{t:'Send 35 DMs + share top-converting content formats with all active influencers',c:D},
+{t:'CAC analysis: Month 3 vs Month 1 — what is the trend? Is it sustainable?',c:AC},
+{t:'ClickFunnels: VIP offer for heavy buyers — separate email track for 3x+ purchasers',c:F},
+{t:'Update influencer leaderboard',c:D},
+{t:'Subscription retention strategies: what is working in D2C coffee? Implement 1 today.',c:F},
+{t:'Review influencer replacement pipeline: always have 20 ready to activate',c:D}],
+WED:[
+{t:'Send 35 DMs. Test pitch: "partner with a B Corp in progress — be part of a movement."',c:D},
+{t:'ClickFunnels: segment heavy buyers for VIP early access offer — set up email today',c:F},
+{t:'Brief influencers: "your morning ritual" content hook this week',c:D},
+{t:'Review influencer posts: view counts, clicks, commissions — who is earning?',c:D},
+{t:'ClickFunnels: subscription flow review — is cancellation process too easy? Add retention step.',c:F},
+{t:'Build content library from Month 3 influencer posts — organize by niche and format',c:D}],
+THU:[
+{t:'Send 35 DMs. Weekly P&L: $35,244 cumulative target — on track?',c:AC},
+{t:'Stripe: subscription renewals — any failed payments? Resolve immediately.',c:F},
+{t:'1099 tracker: any influencer on track for $600+ this year? Flag them.',c:AC},
+{t:'ClickFunnels: referral program monthly summary — referrals and revenue generated',c:F},
+{t:'What is blended LTV across all customers after 10 weeks?',c:AC},
+{t:'Set up B Corp financial reporting dashboard in accounting software',c:B}],
+FRI:[
+{t:'Send 35 DMs. 620 packs this week — confirm stock ready for weekend rush.',c:D},
+{t:'ClickFunnels: seasonal promotion planning — what offer in Weeks 13–15?',c:F},
+{t:'Stripe: weekly payout confirmed and reconciled',c:AC},
+{t:'Build Week 11 DM list: 300 targets ready',c:D},
+{t:'Prepare Week 11 influencer brief: theme = "what your barista does not know about freshness"',c:D},
+{t:'Subscription % of all revenue: growing toward 35% target for Week 12?',c:AC}],
+SAT:[
+{t:'Send 35 DMs — peak engagement, maximize outreach',c:D},
+{t:'Collect all UGC from this week — organize by format and performance',c:D},
+{t:'Best-performing influencer this month: what are they doing that others are not?',c:D},
+{t:'ClickFunnels: full mobile UX audit — checkout, upsell, thank-you on mobile',c:F},
+{t:'Write 3 new DM opener variations for Week 11',c:D},
+{t:'Engage authentically with all influencer posts this week',c:D}],
+SUN:[
+{t:'⭐ REVIEW: 620 packs? $35,244 cumulative? Month 3 P&L — consistently $11K+/week?',c:BT},
+{t:'Send Week 10 influencer newsletter: results, leaderboard, Week 11 theme',c:D},
+{t:'Month 3 midpoint P&L: subscription %, CAC, LTV, gross margin — all documented',c:AC},
+{t:'Queue Week 11 DM list: 300 targets ready',c:D},
+{t:'Plan Week 11: 720 packs, first green order, 70 active influencers',c:BT},
+{t:'Update B Corp financial tracker: Month 3 wages, sourcing, community investment',c:B}]}},
+11:{a:{
+MON:[
+{t:'35 green roaster DMs — follow up all sample recipients not yet in negotiation',c:O},
+{t:'Fulfillment at 720 packs/week — confirm logistics can handle 800+ starting Week 12',c:O},
+{t:'Push to close first green coffee order this week — price, volume, payment terms',c:O},
+{t:'Customs broker: submit first green coffee import pre-notification',c:L},
+{t:'Coordinadora de Campo: Week 3 field performance review — Brix rates, lot quality',c:O},
+{t:'B Corp: finalize BIA second draft — all improvements implemented, ready to submit',c:B}],
+TUE:[
+{t:'35 green roaster DMs — new targets plus Week 9 follow-ups at Day 14',c:O},
+{t:'Fulfill Tuesday orders by 2PM',c:O},
+{t:'If first green order agreed in principle: send contract for signature today',c:O},
+{t:'ICA phytosanitary certificate: file for first green coffee export lot',c:L},
+{t:'B Corp: submit BIA second draft to B Lab for preliminary review',c:B,f:'BIA REVISION'},
+{t:'Build Week 12 inventory plan: 800 packs — supply fully secured?',c:O}],
+WED:[
+{t:'35 green roaster DMs + ship green coffee samples batch 5 — 10 more roasters',c:O},
+{t:'Fulfill Wednesday orders — confirm logistics stable at 720/week',c:O},
+{t:'If first green order confirmed: coordinate with mill + freight forwarder for Week 13 shipment',c:O},
+{t:'Confirm customs broker has all documents needed for first green import',c:L},
+{t:'B Corp: Community section final revision — all farmer data and pricing documented',c:B},
+{t:'Prepare Week 12 inventory: 800 packs must be physically on hand by Sunday',c:O}],
+THU:[
+{t:'35 green roaster DMs — priority: anyone who opened your email but has not replied',c:O},
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Update P&L: Week 11 actual vs $12,960 weekly target',c:AC},
+{t:'ICA certificate status — will it be ready for first export in Week 13?',c:L},
+{t:'B Corp: B Lab preliminary feedback received? Log all comments and prioritize responses.',c:B},
+{t:'Send Coordinadora de Campo final offer letter this week if not yet sent',c:O}],
+FRI:[
+{t:'Confirm 800 packs/week supply chain locked for Week 12 — no margin for error',c:O,f:'MILESTONE PREP'},
+{t:'Fulfill all orders — zero backlog entering weekend',c:O},
+{t:'First green order: signed or verbal commitment received?',c:O},
+{t:'Legal review: all green export documents ready for Week 13 first shipment?',c:L},
+{t:'B Corp: respond to B Lab preliminary feedback within 48 hours of receiving it',c:B},
+{t:'Are you at 70 active influencers? If not, accelerate replacements this week.',c:O}],
+SAT:[
+{t:'35 green roaster DMs — Saturday outreach',c:O},
+{t:'Physical stock check: 800 packs confirmed on hand for Week 12?',c:O},
+{t:'B Corp: Customers section — who are your buyers, what impact does your product have?',c:B},
+{t:'Supply chain: all Week 11 lots fully documented for B Corp',c:B},
+{t:'Pack all Monday orders in advance — Week 12 starts at 800 packs, zero delays',c:O},
+{t:'Green pipeline: push every Tier 1 roaster to close before Week 13',c:O}],
+SUN:[
+{t:'⭐ REVIEW: 720 packs? $48,204 cumulative? First green order confirmed or signed?',c:BT},
+{t:'Week 12 GO confirmation: inventory ✓ logistics ✓ 70+ influencers ✓ green order confirmed ✓',c:O,f:'PRE-MILESTONE'},
+{t:'B Corp: score estimate after second revision — above 60 points?',c:B},
+{t:'Legal: ICA certificate ✓ Customs broker ready ✓ Green contract signed ✓',c:L},
+{t:'Plan Week 12: 800 packs milestone, full BIA submission, first green shipment prep',c:BT},
+{t:'Subscription %: if below 30%, fix upsell flow before Week 12 Monday',c:AC}]},
+x:{
+MON:[
+{t:'Send 35 DMs — final push to 70+ active influencers. Replace any inactive immediately.',c:D},
+{t:'ClickFunnels: subscription retention campaign — email to all recurring buyers today',c:F},
+{t:'Send influencer newsletter: Week 11 results, leaderboard, "freshness science" theme',c:D},
+{t:'Brief all active influencers: milestone week ahead — maximum posts in Week 12',c:D},
+{t:'Track B Corp financial data: Month 3 complete — all categories documented',c:B},
+{t:'ClickFunnels: add "Pursuing B Corp Certification" badge to offer page',c:F}],
+TUE:[
+{t:'Send 35 DMs + update influencer leaderboard — top 10 get priority support this month',c:D},
+{t:'Q1 tax estimate — consult accountant if U.S. entity has been active 90+ days',c:AC},
+{t:'ClickFunnels: upsell A/B test — "save 15%" vs "never run out" vs "join the movement"',c:F},
+{t:'Subscription % this week — must be 30%+ before Week 12 or fix the funnel now',c:AC},
+{t:'Bottom 5 by revenue — send 2-week improvement notice or replace immediately',c:D},
+{t:'Build Week 12 influencer campaign brief: milestone week, maximum activity expected',c:D}],
+WED:[
+{t:'Send 35 DMs. Target: 35%+ of all orders on subscription plan this week.',c:D},
+{t:'ClickFunnels: subscription retention email — send to all subscribers with freshness story',c:F},
+{t:'Brief influencers: "the 20-day promise" content — specific, visual, verifiable',c:D},
+{t:'Review influencer posts: clicks, sales, commissions this week',c:D},
+{t:'Add "social proof" email at 14 days post-purchase — drives referrals',c:F},
+{t:'What % of new customers convert to subscription within 30 days of first purchase?',c:AC}],
+THU:[
+{t:'Send 35 DMs. Weekly P&L: $48,204 cumulative target.',c:AC},
+{t:'Stripe: affiliate commissions — confirm all 70 influencer payouts accurate',c:F},
+{t:'Build green coffee B2B email track: roasters who submit inquiry form get automated sequence',c:F},
+{t:'1099 tracker: who has crossed $300 in commissions? Flag for year-end.',c:AC},
+{t:'Full performance report: conversion, AOV, LTV, subscription % all documented',c:F},
+{t:'Influencer ROI by cohort — Month 1 partners vs Month 2 vs Month 3',c:D}],
+FRI:[
+{t:'Send 35 DMs. 720 packs this week. Inventory sufficient for 800 in Week 12?',c:D},
+{t:'Week 12 is the milestone — prepare a special "800 packs" email if milestone is hit',c:F},
+{t:'Stripe: payout confirmed and reconciled',c:AC},
+{t:'Build Week 12 DM list: 300 new targets ready',c:D},
+{t:'Prepare Week 12 influencer brief: "800-pack week — we are here because of you"',c:D},
+{t:'Subscription churn rate over last 4 weeks — target under 5%/month',c:AC}],
+SAT:[
+{t:'Send 35 DMs — reach 70+ active influencers before Sunday review',c:D},
+{t:'Prepare Month 3 influencer highlight reel for social channels',c:D},
+{t:'ClickFunnels: mobile conversion final audit before Week 12 scale',c:F},
+{t:'Collect all UGC from this week',c:D},
+{t:'Write 3 new DM opener variations for Week 12',c:D},
+{t:'LTV of subscription customers at Month 3 vs one-time buyers — document the gap',c:AC}],
+SUN:[
+{t:'⭐ REVIEW: 720 packs? $48,204 cumulative? Subscription %? Green order confirmed?',c:BT},
+{t:'Send Week 11 influencer newsletter: milestone week preview, maximum content request',c:D},
+{t:'If subscription % below 30%, fix upsell flow before Monday — last chance',c:AC},
+{t:'Queue Week 12 DM list: 300 targets ready',c:D},
+{t:'Plan Week 12: 800 packs milestone, B Corp full submission, green shipment prep',c:BT},
+{t:'Set Week 12 targets clearly: 800 packs ✓ $62,604 cumulative ✓ Green order signed ✓',c:BT}]}},
+12:{a:{
+MON:[
+{t:'Fulfillment at 800 packs/week — all systems run without friction',c:O,f:'MILESTONE WEEK'},
+{t:'B Corp: complete full BIA — all 5 sections, all data, submit for official B Lab review',c:B,f:'FULL BIA SUBMIT'},
+{t:'Green coffee: coordinate with mill for Week 13 first 200 lb shipment',c:O},
+{t:'ICA certificate: confirm it is physically in hand for first green export',c:L},
+{t:'Coordinadora de Campo: Week 4 field performance review — Brix rates, lot quality',c:O},
+{t:'Confirm 800 packs available and ready this week — zero supply surprises',c:O}],
+TUE:[
+{t:'Close first confirmed green coffee order: contract signed, payment terms agreed',c:O,f:'GREEN DEAL CLOSE'},
+{t:'Fulfill Tuesday orders — 800/week pace, confirm logistics are stable',c:O},
+{t:'U.S. importer of record: finalize registration with customs broker',c:L},
+{t:'35 green roaster DMs — continue building pipeline for Weeks 13–18',c:O},
+{t:'Acknowledge B Corp BIA submission — respond to any B Lab questions immediately',c:B},
+{t:'Build Week 13 inventory plan: 800 packs + 200 lbs green — both confirmed',c:O}],
+WED:[
+{t:'Confirm 200 lbs green coffee ready to ship Monday Week 13 — sealed, certified, documented',c:O},
+{t:'Fulfill Wednesday orders',c:O},
+{t:'ICA + phytosanitary docs: every document in hand and correct',c:L},
+{t:'35 more green roaster DMs — Week 12 target: 150+ total roasters contacted',c:O},
+{t:'B Corp: prepare evidence binder for B Lab site visit — photographs, records, contracts',c:B},
+{t:'Green coffee logistics: Miami port routing confirmed, broker fees documented',c:O}],
+THU:[
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'35 green roaster DMs — follow up everyone who received samples but has not responded',c:O},
+{t:'Update P&L: Week 12 actual vs $14,400 weekly target',c:AC},
+{t:'B Lab preliminary score: if received, review feedback and plan response within 5 days',c:B},
+{t:'Coordinadora de Campo: fully trained and generating quality field reports?',c:O},
+{t:'Legal audit: green export docs ready ✓ Customs broker confirmed ✓ ICA ✓',c:L}],
+FRI:[
+{t:'Fulfill 800 packs this week — confirm we hit the number by end of day',c:O,f:'HIT 800'},
+{t:'Zero backlog entering Week 13 — roasted and green both clean',c:O},
+{t:'Send 5 final sample kits to Tier 1 roasters not yet converted',c:O},
+{t:'All green export compliance documents: everything ready for Monday Week 13 shipment?',c:L},
+{t:'B Corp: respond to B Lab feedback within 48 hours of receiving it',c:B},
+{t:'Pack Monday orders — Week 13 dual revenue begins Monday, zero friction',c:O}],
+SAT:[
+{t:'35 green roaster DMs — Saturday specialty roaster outreach',c:O},
+{t:'Prepare Week 13 green shipment: 200 lbs, vacuum packed, all export docs attached',c:O},
+{t:'B Corp: SPS compliance documentation complete — prepared for B Lab verification',c:B},
+{t:'Supply chain: complete documentation for all lots Weeks 10–12',c:B},
+{t:'Green pipeline: enough volume confirmed to hit 500 lbs in Week 14?',c:O},
+{t:'Write green coffee fulfillment SOP: from order confirmed to delivery at U.S. roaster',c:O}],
+SUN:[
+{t:'🏆 MILESTONE: 800 packs ✓ $62,604 cumulative ✓ Green order confirmed ✓',c:BT,f:'MILESTONE'},
+{t:'Legal audit Weeks 8–12: FDA ✓ ICA ✓ Customs broker ✓ B Corp submitted ✓ Trademark ✓',c:L},
+{t:'P&L close: Phase 2 complete — document every metric, archive in Google Drive',c:AC},
+{t:'B Corp: current BIA score vs 80-point threshold — what is the final gap?',c:B},
+{t:'Plan Week 13: 800 packs + 200 lbs green, dual revenue active',c:BT},
+{t:'Brief Alex: Phase 3 begins — dual revenue, maximum execution, zero excuses',c:BT}]},
+x:{
+MON:[
+{t:'Send 35 DMs — 800-pack week, 71+ active partners. No drop in consistency.',c:D,f:'MILESTONE WEEK'},
+{t:'Month 3 close: every metric documented for B Corp financial impact report',c:AC},
+{t:'ClickFunnels: green coffee B2B landing page — build and publish today',c:F},
+{t:'Send influencer newsletter: 800-pack milestone week — maximum content effort',c:D},
+{t:'Track B Corp financial data: Month 3 totals — wages, sourcing premium, community investment',c:B},
+{t:'Brief all 71 influencers: milestone week — your best content is needed now',c:D}],
+TUE:[
+{t:'Send 35 DMs. Replace any influencer who has gone inactive in the last 14 days.',c:D},
+{t:'B Corp financial tracking: wages paid, sourcing costs above FNC, community investment',c:B},
+{t:'Renew any influencer affiliate agreements expiring this month',c:F},
+{t:'Email campaign: "The story behind your coffee" — harvest date transparency, send today',c:F},
+{t:'Top 10 influencers by revenue: what do they have in common? Brief others to replicate.',c:D},
+{t:'Update influencer leaderboard with Week 12 data',c:D}],
+WED:[
+{t:'Send 35 DMs + follow up warm leads from Weeks 9–11',c:D},
+{t:'ClickFunnels: set up dual revenue Stripe reporting — D2C and green B2B separate',c:F},
+{t:'Brief influencers: "I tracked my coffee from harvest to cup in 20 days" — story hook',c:D},
+{t:'Review email list: total subscriber count? Monthly churn rate?',c:F},
+{t:'Social proof campaign: compile best 10 influencer videos from Month 3 — highlight reel',c:D},
+{t:'ClickFunnels: subscription flow — confirm works at 800/week volume without errors',c:F}],
+THU:[
+{t:'Send 35 DMs. $62,604 cumulative — does Stripe total confirm this number?',c:AC},
+{t:'Stripe: green coffee B2B invoicing SKU working correctly?',c:F},
+{t:'1099 tracker: any influencer crossing $600 this year? Send IRS W-9 request immediately.',c:AC},
+{t:'Full performance report: conversion, AOV, LTV, subscription % all documented',c:F},
+{t:'Month 3 blended LTV — compare to Month 1. What is the growth trajectory?',c:AC},
+{t:'B Corp financial data: are you meeting impact thresholds for the financial section?',c:B}],
+FRI:[
+{t:'Send 35 DMs. 800 packs this week — confirm we hit the number.',c:D,f:'HIT 800'},
+{t:'ClickFunnels: green coffee landing page live — test inquiry form end to end',c:F},
+{t:'Stripe: weekly payout confirmed and reconciled',c:AC},
+{t:'Build Week 13 DM list: 300 new targets ready',c:D},
+{t:'Prepare Week 13 influencer brief: "dual revenue begins — our brand is scaling"',c:D},
+{t:'Subscription % this week — target 35%+ maintained?',c:AC}],
+SAT:[
+{t:'Send 35 DMs + full influencer review: who stays, who goes, who upgrades to ambassador',c:D},
+{t:'Month 3 social proof highlight reel: best 10 posts into one video',c:D},
+{t:'Green coffee page analytics: any roasters submitting inquiries?',c:F},
+{t:'All influencer contracts current? Any renewals needed in Month 4?',c:D},
+{t:'Collect all UGC from this week into the social proof library',c:D},
+{t:'Write Week 13 influencer newsletter: Phase 3 begins, dual revenue, your role is critical',c:D}],
+SUN:[
+{t:'🏆 MILESTONE: 800 packs ✓ $62,604 cumulative ✓ P&L close — Phase 2 complete.',c:BT,f:'MILESTONE'},
+{t:'Month 3 final P&L: every number documented and filed in Google Drive',c:AC},
+{t:'Subscription %: if below 35%, fix upsell flow before Phase 3 — it compounds',c:AC},
+{t:'Queue Week 13 DM list: 300 targets ready',c:D},
+{t:'Plan Week 13: 800 packs + 200 lbs green, dual revenue active',c:BT},
+{t:'B Corp financial report: Month 3 data confirms impact — document for BIA',c:B}]}},
+13:{a:{
+MON:[
+{t:'Ship first 200 lbs green coffee — confirm tracking number sent to roaster immediately',c:O,f:'DUAL REVENUE'},
+{t:'35 green roaster DMs — scale outreach, first sale proves the model',c:O},
+{t:'Confirm 48-hour green coffee order response protocol: roaster orders → mill confirms → ship',c:O},
+{t:'Coordinadora de Campo: Week 5 field schedule and Brix quality standards confirmed',c:O},
+{t:'ICA + INVIMA: all documentation current for ongoing green exports',c:L},
+{t:'B Corp: begin implementing all B Lab formal feedback — document every change',c:B}],
+TUE:[
+{t:'35 green roaster DMs — new targets plus Day 3 follow-up for Monday contacts',c:O},
+{t:'Fulfill 800 roasted packs — confirm supply chain is smooth',c:O},
+{t:'Confirm 200 lbs green coffee received by roaster — request written delivery confirmation',c:O},
+{t:'Sign green coffee export contract with first buyer — Colombia law reviewed by lawyer',c:L},
+{t:'FX exposure assessment: COP/USD — impact on green coffee margin this month',c:L},
+{t:'Document first green coffee sale for B Corp: farmer, farm, price paid above market',c:B}],
+WED:[
+{t:'Request tasting feedback from first roaster — call or video preferred, not just email',c:O},
+{t:'35 green roaster DMs — 150+ total roasters contacted running total',c:O},
+{t:'Fulfill all Wednesday orders',c:O},
+{t:'Prepare next shipment: 500 lbs confirmed for Week 14 — coordinate with mill',c:O},
+{t:'ICA interdepartmental transport permit: Coordinadora de Campo trained and handling it?',c:L},
+{t:'B Corp: implement top 3 B Lab improvements — photograph or document evidence of each',c:B}],
+THU:[
+{t:'35 green roaster DMs + follow up all Week 8–12 contacts not yet converted',c:O},
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Update P&L: Week 13 actual vs $14,700 — roasted + green combined',c:AC},
+{t:'Customs broker: confirm Week 14 shipment documentation process',c:L},
+{t:'B Corp: Governance section — document decision-making structure across both entities',c:B},
+{t:'Green pipeline: what is needed to hit 500 lbs in Week 14?',c:O}],
+FRI:[
+{t:'Fulfill all orders — zero backlog',c:O},
+{t:'35 green roaster DMs — Friday push, roasters often approve orders before weekend',c:O},
+{t:'Prepare 500 lbs green coffee for Week 14 shipment — all documentation ready',c:O},
+{t:'Legal: green coffee contract template — using it for all deals?',c:L},
+{t:'Coordinadora de Campo: first field quality report reviewed — Brix acceptance rate documented',c:O},
+{t:'B Corp: estimated BIA score — approaching the 80-point threshold?',c:B}],
+SAT:[
+{t:'35 green roaster DMs — Saturday specialty roaster outreach',c:O},
+{t:'Pack all Monday orders in advance',c:O},
+{t:'Document first green sale in full: lot number, weight, price, buyer, dates',c:B},
+{t:'Supply chain: Weeks 11–13 lots fully logged for B Corp',c:B},
+{t:'Green coffee margin review: is $5.50–$6.00/lb sustainable after freight and broker fees?',c:AC},
+{t:'Research certifications that would make green coffee more attractive to specialty buyers',c:B}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 200 lbs green shipped ✓ $77,304 cumulative?',c:BT},
+{t:'Dual P&L: roasted vs green — which channel has better gross margin %?',c:AC},
+{t:'Green pipeline: confirmed orders for Weeks 14–18 — total pipeline volume?',c:O},
+{t:'Legal: all green export documents current and filed ✓',c:L},
+{t:'B Corp: B Lab feedback implementation log — how many suggestions implemented?',c:B},
+{t:'Plan Week 14: 800 packs + 500 lbs green, B Corp verification prep',c:BT}]},
+x:{
+MON:[
+{t:'Send 35 DMs — 800 packs/week must be maintained without exception',c:D,f:'DUAL REVENUE'},
+{t:'ClickFunnels: B Corp badge on offer page — "Pursuing B Corp Certification"',c:F},
+{t:'Send influencer newsletter: dual revenue begins, brand is scaling',c:D},
+{t:'Green coffee P&L module live in accounting — separate cost center',c:AC},
+{t:'Brief influencers: "harvested, not warehoused" as new content hook this week',c:D},
+{t:'Track B Corp financial data: Month 4 begins — wages, sourcing, community investment',c:B}],
+TUE:[
+{t:'Send 35 DMs + follow up warm leads from Weeks 10–12',c:D},
+{t:'Green coffee P&L: first sale entered — revenue, COGS, gross margin per lb',c:AC},
+{t:'ClickFunnels: green coffee B2B inquiry form — test submission, confirm automation',c:F},
+{t:'Review influencer performance: any changes in conversion rate at scale?',c:D},
+{t:'Update influencer leaderboard with Week 13 data',c:D},
+{t:'Build 4-week content calendar for Month 4: freshness → origin → process → impact',c:D}],
+WED:[
+{t:'Send 35 DMs + email campaign: "How your coffee gets to you in 20 days"',c:D},
+{t:'ClickFunnels: A/B test green coffee page — "specialty grade" vs "competition grade"',c:F},
+{t:'Brief influencers: origin story content — specific farm, altitude, harvest season',c:D},
+{t:'Review influencer posts this week: UGC quality improving? Screenshot all.',c:D},
+{t:'ClickFunnels: email sequence for green B2B leads — confirm automation running',c:F},
+{t:'Subscription % maintained at 35%+ this week?',c:AC}],
+THU:[
+{t:'Send 35 DMs. $77,304 cumulative — Stripe + green invoice combined.',c:AC},
+{t:'Stripe: issue green coffee invoice to first roaster buyer — confirm payment received',c:F},
+{t:'1099 tracker: Month 4 influencer commissions logged',c:AC},
+{t:'Green coffee page analytics: roasters landing but not converting? Diagnose.',c:F},
+{t:'Subscription retention — any cancellations? Call to find out the reason.',c:F},
+{t:'Dual revenue LTV: what is a roaster client worth vs a D2C subscriber?',c:AC}],
+FRI:[
+{t:'Send 35 DMs. 800 packs target — confirm mid-day pace.',c:D},
+{t:'ClickFunnels: green coffee inquiry form analytics — how many B2B leads this week?',c:F},
+{t:'Stripe: weekly payout confirmed and reconciled for both channels',c:AC},
+{t:'Build Week 14 DM list: 300 new targets ready',c:D},
+{t:'Prepare Week 14 influencer brief: theme = "the process behind the flavor"',c:D},
+{t:'Any top performers ready for ambassador upgrade?',c:D}],
+SAT:[
+{t:'Send 35 DMs — Saturday outreach, peak engagement',c:D},
+{t:'ClickFunnels: full mobile + desktop audit — friction introduced at scale?',c:F},
+{t:'Collect all UGC from this week — organize by niche and format',c:D},
+{t:'Engage publicly with every influencer post this week',c:D},
+{t:'Write 3 new DM opener variations for Week 14',c:D},
+{t:'B Corp financial tracking: are you meeting the financial impact thresholds?',c:B}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 200 lbs green ✓ $77,304 cumulative? Which channel margin is better?',c:BT},
+{t:'Send Week 13 influencer newsletter: dual revenue milestone, leaderboard, Week 14 theme',c:D},
+{t:'P&L close: dual revenue breakdown, subscription %, gross margin by channel',c:AC},
+{t:'Queue Week 14 DM list: 300 targets ready',c:D},
+{t:'Plan Week 14: 800 packs + 500 lbs green, B Corp verification prep',c:BT},
+{t:'B Corp: on track for 80 points? Current estimate?',c:B}]}},
+14:{a:{
+MON:[
+{t:'35 green roaster DMs + fulfill 500 lbs green coffee this week',c:O},
+{t:'Colombia INVIMA export certification: confirm receipt or escalate today',c:L},
+{t:'Coordinadora de Campo: Week 6 field report — quality trend, Brix acceptance rates',c:O},
+{t:'Customs broker: confirm Week 14 green shipment fully documented and on track',c:L},
+{t:'B Corp: prepare for B Lab site verification — organize full evidence binder',c:B},
+{t:'Fulfill Monday roasted orders — 800 packs/week sustained',c:O}],
+TUE:[
+{t:'35 green roaster DMs — new targets plus Week 10 follow-ups at Day 14',c:O},
+{t:'Fulfill Tuesday orders by 2PM',c:O},
+{t:'500 lbs green coffee: freight forwarder confirmed, documentation complete, ship today',c:O},
+{t:'Implement all B Lab feedback items — document every change with date and evidence',c:B},
+{t:'ICA transport permit: confirm Coordinadora de Campo handles permits independently',c:L},
+{t:'Green coffee margin at 500 lbs: revenue, COGS, gross profit, margin %',c:AC}],
+WED:[
+{t:'Confirm 500 lbs green tracking and customs clearance',c:O},
+{t:'35 green roaster DMs — continue building pipeline for Weeks 15–18',c:O},
+{t:'Fulfill Wednesday orders',c:O},
+{t:'SPS compliance: finalize documentation package — have lawyer review',c:L},
+{t:'B Corp: BIA revised and resubmitted with all B Lab improvements',c:B,f:'BIA RESUBMIT'},
+{t:'Confirm Week 15 green: 1,000 lbs needs to be confirmed and supply secured',c:O}],
+THU:[
+{t:'Close 2+ new roaster accounts this week — needed for 1,000 lbs pipeline in Week 15',c:O},
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Update P&L: Week 14 actual vs $15,150 weekly target — both channels',c:AC},
+{t:'Colombia SAS annual filing requirements — check compliance calendar today',c:L},
+{t:'B Corp: Governance section — document dual-entity structure, decision rights, reporting',c:B},
+{t:'35 green roaster DMs — follow up all Week 14 contacts',c:O}],
+FRI:[
+{t:'Fulfill all orders — zero backlog',c:O},
+{t:'Confirm Week 15 supply: 800 packs + 1,000 lbs green — both confirmed by COB',c:O},
+{t:'Legal: all green export documents standardized into a repeatable process?',c:L},
+{t:'B Corp: impact report draft — workers, environment, community, governance all documented',c:B},
+{t:'Coordinadora de Campo: ICA permit authority confirmed — she handles independently',c:O},
+{t:'Pack all Monday orders in advance',c:O}],
+SAT:[
+{t:'35 green roaster DMs — push to close enough deals for 1,000 lbs in Week 15',c:O},
+{t:'Supply chain: Weeks 12–14 lots fully logged for B Corp',c:B},
+{t:'B Corp: schedule B Lab verification meeting — request earliest available date',c:B},
+{t:'Green coffee logistics SOP: documented well enough for Coordinadora to run independently?',c:O},
+{t:'Current FNC base price: are you pricing above it in a way that benefits farmers?',c:B},
+{t:'Update green coffee pipeline: tier 1, tier 2, tier 3 — review and update all',c:O}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 500 lbs green ✓ $92,454 cumulative?',c:BT},
+{t:'Gross margin by channel: roasted target 27%, green target 18% — both being hit?',c:AC},
+{t:'Legal: all compliance documents current ✓ BIA resubmitted ✓',c:L},
+{t:'B Corp: B Lab verification meeting scheduled? Confirm date.',c:B},
+{t:'Plan Week 15: 800 packs + 1,000 lbs green, B Lab verification',c:BT},
+{t:'Green pipeline: 1,000 lbs confirmed for Week 15? Close any open deals today.',c:O}]},
+x:{
+MON:[
+{t:'Send 35 DMs — maintain 71+ active partners. Replace any who have gone dark.',c:D},
+{t:'ClickFunnels: green coffee B2B funnel analytics — how many roaster leads this month?',c:F},
+{t:'Send influencer newsletter: Week 14 results, leaderboard, "the process" content theme',c:D},
+{t:'FX review: COP/USD — document impact on green coffee profitability, share with Alejandro',c:AC},
+{t:'Track B Corp financial data: Month 4 wages, sourcing, community investment',c:B},
+{t:'Brief all influencers: origin story content this week — specific and visual',c:D}],
+TUE:[
+{t:'Send 35 DMs + influencer renewal review: any 90-day contracts expiring? Renegotiate top 10.',c:D},
+{t:'FX exposure: calculate how COP/USD movement affects green coffee profit per lb',c:AC},
+{t:'ClickFunnels: supply chain transparency email — harvest date → roast → doorstep',c:F},
+{t:'Influencer cohort Month 4 vs Month 1 — LTV improving?',c:D},
+{t:'Update influencer leaderboard with Week 14 data',c:D},
+{t:'Build Month 5 influencer content calendar: 4 weeks planned',c:D}],
+WED:[
+{t:'Send 35 DMs. Test pitch: "B Corp certified in progress — values brand for your customers."',c:D},
+{t:'Brief influencers: "the 20-day freshness guarantee" content hook',c:D},
+{t:'ClickFunnels: "your coffee impact story" B Corp narrative email to all subscribers',c:F},
+{t:'Review influencer posts: view counts, clicks, Stripe sales',c:D},
+{t:'ClickFunnels: subscription cancellation flow — add "pause" option before full cancellation',c:F},
+{t:'Build referral email sequence: after 3 purchases, ask buyers to refer a friend',c:F}],
+THU:[
+{t:'Send 35 DMs. $92,454 cumulative — Stripe + green invoices combined.',c:AC},
+{t:'Stripe: green coffee invoice 2 issued and payment confirmed',c:F},
+{t:'1099 tracker: all influencer commissions Month 4 logged',c:AC},
+{t:'Full analytics export — prepare Month 4 performance report',c:F},
+{t:'Subscription LTV at 4 months: is the math compounding correctly?',c:AC},
+{t:'Blended LTV: D2C subscribers + green roaster clients combined',c:AC}],
+FRI:[
+{t:'Send 35 DMs. 800 packs + 500 lbs green this week — both channels on track?',c:D},
+{t:'ClickFunnels: seasonal/holiday promotion planning — design offer for Weeks 16–18',c:F},
+{t:'Stripe: payout confirmed and reconciled for both channels',c:AC},
+{t:'Build Week 15 DM list: 300 new targets ready',c:D},
+{t:'Prepare Week 15 influencer brief: theme = "the impact behind your cup"',c:D},
+{t:'Top 5 influencers by LTV generated — what makes them special?',c:D}],
+SAT:[
+{t:'Send 35 DMs + compile Month 4 influencer results for brand social channels',c:D},
+{t:'LTV update: average subscriber at 4 months — compare to Month 3',c:AC},
+{t:'ClickFunnels: offer page A/B test — hero image update with real farm photography',c:F},
+{t:'Collect all UGC from this week',c:D},
+{t:'Engage publicly with every influencer post this week',c:D},
+{t:'Write 3 new DM opener variations for Week 15',c:D}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 500 lbs green ✓ $92,454 cumulative? Channel margins met?',c:BT},
+{t:'Send Week 14 influencer newsletter: results, leaderboard, Week 15 theme',c:D},
+{t:'Month 4 P&L close: dual channel, FX impact, subscription %, gross margin',c:AC},
+{t:'Queue Week 15 DM list: 300 targets ready',c:D},
+{t:'Plan Week 15: 800 packs + 1,000 lbs green, B Lab verification prep',c:BT},
+{t:'B Corp: on track for verification this month?',c:B}]}},
+15:{a:{
+MON:[
+{t:'35 green roaster DMs + ship 1,000 lbs green coffee this week',c:O},
+{t:'B Corp: B Lab site verification — confirm meeting date, prepare full evidence binder',c:B,f:'VERIFICATION'},
+{t:'Fulfill 800 roasted packs — logistics stable',c:O},
+{t:'Coordinadora de Campo: Week 7 field report — Brix acceptance rates, lot documentation',c:O},
+{t:'Customs cleared on Week 14 green shipment? Document any friction for improvement.',c:L},
+{t:'Review green pipeline: confirmed orders for Weeks 16–18?',c:O}],
+TUE:[
+{t:'35 green roaster DMs — new targets',c:O},
+{t:'Fulfill Tuesday orders by 2PM',c:O},
+{t:'Colombia SAS: annual filing requirements — check calendar, anything compliance due?',c:L},
+{t:'1,000 lbs green: coordinate with freight forwarder, confirm Miami ETA and customs clearance',c:O},
+{t:'B Corp: finalize full impact report for B Lab verification — all 5 sections complete',c:B},
+{t:'ICA + phytosanitary SOP now fully standardized and documented',c:L}],
+WED:[
+{t:'35 green roaster DMs — close 2+ new roaster accounts for Week 16 pipeline',c:O},
+{t:'Fulfill Wednesday orders',c:O},
+{t:'Prepare for B Lab verification meeting: impact evidence binder organized',c:B},
+{t:'1,000 lbs green: tracking confirmed, customs on track, roaster notified of ETA',c:O},
+{t:'Confirm supply chain: 1,800 lbs green logistics confirmed with mill for Week 16',c:O},
+{t:'Document all processing data from the last 30 days for B Corp site visit evidence',c:B}],
+THU:[
+{t:'B Lab verification meeting — present full impact binder, answer all questions',c:B,f:'B LAB MEETING'},
+{t:'35 green roaster DMs',c:O},
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Update P&L: Week 15 actual vs $15,900 weekly target',c:AC},
+{t:'SPS compliance package: finalized and signed by lawyer',c:L},
+{t:'Document B Lab meeting: questions asked, evidence reviewed, next steps confirmed',c:B}],
+FRI:[
+{t:'Fulfill all orders + 1,000 lbs green — zero backlog',c:O},
+{t:'Follow up B Lab meeting: send any additional documents requested within 24 hours',c:B},
+{t:'Confirm Week 16 supply: 800 packs + 1,800 lbs green — both supply chains locked',c:O},
+{t:'Coordinadora de Campo: Brix acceptance rate report — documented for B Corp',c:O},
+{t:'Colombia SAS: confirm fully compliant — no outstanding filings',c:L},
+{t:'Pack all Monday orders in advance',c:O}],
+SAT:[
+{t:'35 green roaster DMs — Saturday specialty roaster outreach',c:O},
+{t:'B Corp: implement all B Lab verification feedback immediately — document everything',c:B},
+{t:'Supply chain: Weeks 13–15 lots fully logged',c:B},
+{t:'Green coffee margin at 1,000 lbs: improving with volume?',c:AC},
+{t:'Environmental data: solar energy this month, water recaptured, chemicals avoided',c:B},
+{t:'Prepare for 1,800 lbs in Week 16 — mill capacity confirmed?',c:O}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 1,000 lbs green ✓ $108,354 cumulative?',c:BT},
+{t:'B Corp: B Lab verification done ✓ — next step and expected timeline confirmed?',c:B},
+{t:'Legal: SPS compliance ✓ ICA current ✓ Colombia SAS compliant ✓',c:L},
+{t:'P&L stress-test: $62K to goal in 3 weeks. What needs to go perfectly?',c:AC},
+{t:'Plan Week 16: 800 packs + 1,800 lbs green, B Corp final implementation',c:BT},
+{t:'Green pipeline: 1,800 lbs confirmed for Week 16? Close any remaining deals today.',c:O}]},
+x:{
+MON:[
+{t:'Send 35 DMs — 71+ partners stable. Replace any inactive this week.',c:D},
+{t:'ClickFunnels: gift bundle offer — 3-pack gift set for seasonal angle, live today',c:F},
+{t:'Send influencer newsletter: Week 15 results, leaderboard, "impact behind your cup" theme',c:D},
+{t:'B Corp financial tracking: Month 5 begins — wages, sourcing, community investment',c:B},
+{t:'Brief influencers: B Lab verification is happening — share the story with your audience',c:D},
+{t:'Subscription % maintained at 35%+? If not, fix today.',c:AC}],
+TUE:[
+{t:'Send 35 DMs + replace bottom 5 inactive influencer partners with new activations',c:D},
+{t:'Gross margin analysis: roasted vs green, Week 15 data side by side',c:AC},
+{t:'ClickFunnels: add B Corp story email at day 21 post-purchase',c:F},
+{t:'Influencer cohort Month 5 vs Month 1 — LTV trajectory?',c:D},
+{t:'Update influencer leaderboard',c:D},
+{t:'Research: any new influencer niches not yet tested? Identify 1 to try.',c:D}],
+WED:[
+{t:'Send 35 DMs. Pitch: "we are pursuing B Corp certification — be part of the story."',c:D},
+{t:'ClickFunnels: transparency campaign — harvest date → roast date → doorstep story email',c:F},
+{t:'Brief influencers: "this coffee was harvested 18 days ago" — specific, verifiable hook',c:D},
+{t:'Review influencer posts: view counts, link clicks, Stripe revenue',c:D},
+{t:'Gift bundle: converting? What is the AOV impact?',c:F},
+{t:'Build referral email sequence — 3-purchase trigger if not already done',c:F}],
+THU:[
+{t:'Send 35 DMs. $108,354 cumulative target.',c:AC},
+{t:'Stripe: both channels reconciled — roasted D2C + green invoices all confirmed',c:F},
+{t:'1099 tracker: Month 5 influencer commissions all logged',c:AC},
+{t:'Gift bundle analytics: net positive on revenue and margin?',c:F},
+{t:'Blended LTV after 15 weeks — what is the 6-month projection?',c:AC},
+{t:'Set up B Corp customer impact tracking: what is impact on each subscriber?',c:B}],
+FRI:[
+{t:'Send 35 DMs. $108K cumulative — confirm with Stripe total today.',c:D},
+{t:'ClickFunnels: referral program push — email to all customers with 5+ purchases',c:F},
+{t:'Stripe: payout confirmed and reconciled for both channels',c:AC},
+{t:'Build Week 16 DM list: 300 new targets ready',c:D},
+{t:'Prepare Week 16 influencer brief: theme = "Colombian coffee is different — here is why"',c:D},
+{t:'Subscriber churn rate: above 5%/month? Identify cause and fix this week.',c:AC}],
+SAT:[
+{t:'Send 35 DMs + content hook: "this coffee was harvested 18 days ago"',c:D},
+{t:'Collect all UGC from this week — organize and add to social proof library',c:D},
+{t:'Full email analytics audit — after 15 weeks, what has been the best-performing email?',c:F},
+{t:'Engage publicly with all influencer posts this week',c:D},
+{t:'Write 3 new DM opener variations for Week 16',c:D},
+{t:'B Corp: share B Lab verification story with influencers — give them content to post',c:B}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 1,000 lbs green ✓ $108,354 cumulative? 3 weeks to $170K.',c:BT},
+{t:'Send Week 15 influencer newsletter: B Corp verification happened, share the story',c:D},
+{t:'P&L: $62K needed in 3 weeks. Realistic? Stress-test each channel.',c:AC},
+{t:'Queue Week 16 DM list: 300 targets ready',c:D},
+{t:'Plan Week 16: 800 packs + 1,800 lbs green, B Corp feedback implementation',c:BT},
+{t:'B Corp: next steps from B Lab documented — certification timeline?',c:B}]}},
+16:{a:{
+MON:[
+{t:'35 green roaster DMs + ship 1,800 lbs green coffee this week',c:O},
+{t:'B Corp: implement all B Lab verification feedback — document every change with evidence',c:B},
+{t:'Fulfill 800 roasted packs — flawless logistics this week',c:O},
+{t:'Confirm 90-day cherry supply secured with farms in Andes, Antioquia',c:O},
+{t:'Customs broker: confirm Week 16 green shipment fully documented and clearing on schedule',c:L},
+{t:'B Corp: Governance section final — dual-entity benefit corp status confirmed?',c:B}],
+TUE:[
+{t:'35 green roaster DMs — new targets plus Day 3 follow-ups',c:O},
+{t:'Fulfill Tuesday orders by 2PM',c:O},
+{t:'1,800 lbs green: freight forwarder confirmed, documentation complete, shipment dispatched',c:O},
+{t:'Colombia SAS: all annual filings current — verify with Colombian accountant',c:L},
+{t:'B Corp: finalize full impact report incorporating all B Lab feedback',c:B},
+{t:'Supply chain: all Week 14–16 lots fully logged for B Corp',c:B}],
+WED:[
+{t:'35 green roaster DMs — close deals needed for 2,800 lbs in Week 17',c:O},
+{t:'Fulfill Wednesday orders',c:O},
+{t:'1,800 lbs green: tracking confirmed, customs on track',c:O},
+{t:'Confirmed orders to hit 2,800 lbs next week?',c:O},
+{t:'B Corp: supply chain transparency document complete — farm to export fully mapped',c:B},
+{t:'Coordinadora de Campo: Week 8 field review — quality trend, Brix rates, volume forecast',c:O}],
+THU:[
+{t:'35 green roaster DMs — follow up all Week 16 contacts',c:O},
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Update P&L: Week 16 actual vs $18,000 weekly target',c:AC},
+{t:'All export permits and filings current — no gaps before final push',c:L},
+{t:'B Corp: resubmit final BIA with all improvements — request certification timeline in writing',c:B,f:'FINAL BIA'},
+{t:'What operational risks could prevent hitting $170K? Address each one.',c:O}],
+FRI:[
+{t:'Fulfill all orders — zero backlog. Confirm Week 17: 800 packs + 2,800 lbs green.',c:O},
+{t:'35 green roaster DMs — Friday push before weekend',c:O},
+{t:'Legal final prep: all contracts, permits, filings organized for Week 18 audit',c:L},
+{t:'Document full supply chain for B Corp: origin → process → export → roaster delivery',c:B},
+{t:'Confirm 3,800 lbs green locked for Week 18 — deals confirmed in writing',c:O},
+{t:'Pack all Monday orders in advance',c:O}],
+SAT:[
+{t:'35 green roaster DMs — Saturday outreach, close Week 17–18 pipeline',c:O},
+{t:'B Corp: Worker section — Coordinadora de Campo full 8-week performance data documented',c:B},
+{t:'Green coffee margin trend — improving with volume as expected?',c:AC},
+{t:'Environmental data: full 16-week quantified impact — solar kWh, water, CO2',c:B},
+{t:'Prepare Week 17 green coffee: 2,800 lbs logistics confirmed with mill and freight',c:O},
+{t:'Review: contract roaster at full capacity? Any supply risk for Weeks 17–18?',c:O}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 1,800 lbs green ✓ $126,354 cumulative? $44K in 2 weeks.',c:BT},
+{t:'B Corp: certification ETA confirmed from B Lab? Write down the date.',c:B},
+{t:'Legal: all compliance documents verified and current',c:L},
+{t:'P&L stress-test: 2 weeks left, $44K needed — risks? Mitigate each one.',c:AC},
+{t:'Plan Week 17: 800 packs + 2,800 lbs green, legal audit prep',c:BT},
+{t:'Confirm supply chains: coffee ✓ green 2,800 lbs ✓ logistics ✓',c:O}]},
+x:{
+MON:[
+{t:'Send 35 DMs — 71+ active partners, no drop in consistency',c:D},
+{t:'Budget vs actual review: Weeks 1–16 full audit of every line item',c:AC},
+{t:'Send influencer newsletter: Week 16 results, leaderboard, "Colombian coffee" theme',c:D},
+{t:'ClickFunnels: tiered commission system live — top performers earning higher % today',c:F},
+{t:'B Corp financial tracking: Month 5 complete — wages, sourcing, community investment',c:B},
+{t:'Brief all influencers: 2 weeks left — maximum posting effort requested',c:D}],
+TUE:[
+{t:'Send 35 DMs + tiered commission brief: top 10 influencers notified of higher rate',c:D},
+{t:'Budget vs actual: every line reviewed — where did we outperform? Where did we miss?',c:AC},
+{t:'ClickFunnels: "4 months of freshness" email campaign — customer retention story',c:F},
+{t:'Which Month 1 partners are still active and generating revenue?',c:D},
+{t:'Update influencer leaderboard with Week 16 data',c:D},
+{t:'Build Week 17–18 activation plan: who needs a push for the final sprint?',c:D}],
+WED:[
+{t:'Send 35 DMs. Content angle: "roasters who choose our beans choose transparency."',c:D},
+{t:'ClickFunnels: final 2-week email campaign — urgency, value, story combined',c:F},
+{t:'Brief influencers: B Corp certification timeline — they are part of this story',c:D},
+{t:'Review influencer posts: content quality maintained at Week 16?',c:D},
+{t:'ClickFunnels: subscription retention campaign — email to all subscribers this week',c:F},
+{t:'Build final 2-week influencer content calendar: exact posts, exact days',c:D}],
+THU:[
+{t:'Send 35 DMs. $126,354 cumulative. 2 weeks to $170K.',c:AC},
+{t:'Stripe: green coffee invoice 3 issued and payment confirmed',c:F},
+{t:'1099 tracker: Month 5 all commissions logged',c:AC},
+{t:'ClickFunnels: final 2-week conversion sprint — top 3 highest-impact changes',c:F},
+{t:'Blended LTV after 16 weeks — 12-month LTV projection?',c:AC},
+{t:'If churn stays flat, what is subscription revenue at Week 26, Week 52?',c:AC}],
+FRI:[
+{t:'Send 35 DMs. $18K profit target this week — confirm with Stripe at mid-day.',c:D},
+{t:'ClickFunnels: plan Weeks 17–18 final push — seasonal offer or urgency campaign',c:F},
+{t:'Stripe: payout confirmed and reconciled for both channels',c:AC},
+{t:'Build Week 17 DM list: 300 new targets ready',c:D},
+{t:'Prepare Week 17 influencer brief: "2 weeks left — make your best content count"',c:D},
+{t:'Any underperforming influencers who can be replaced before final 2 weeks?',c:D}],
+SAT:[
+{t:'Send 35 DMs + review top revenue drivers this month',c:D},
+{t:'Social proof post: "4-month results" — X packs sold, X roasters served, B Corp in progress',c:D},
+{t:'ClickFunnels: full 4-month funnel performance summary exported',c:F},
+{t:'Collect all UGC from this week',c:D},
+{t:'Engage authentically with every influencer post this week',c:D},
+{t:'Write 3 new DM openers for Week 17',c:D}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 1,800 lbs green ✓ $126,354 cumulative? Final stretch plan.',c:BT},
+{t:'Send Week 16 influencer newsletter: final 2 weeks, maximum effort, leaderboard',c:D},
+{t:'Stress-test: $44K in 2 weeks. Which risks could prevent it? Mitigate each.',c:AC},
+{t:'Queue Week 17 DM list: 300 targets ready',c:D},
+{t:'Plan Week 17: 800 packs + 2,800 lbs green, final legal audit prep',c:BT},
+{t:'Budget vs actual summary: Month 1–4 complete, shared with Alejandro',c:AC}]}},
+17:{a:{
+MON:[
+{t:'35 green roaster DMs + ship 2,800 lbs green coffee this week',c:O,f:'LARGEST WEEK'},
+{t:'Q2 estimated tax: prepare all documents for accountant — U.S. entity',c:L},
+{t:'2,800 lbs: largest shipment yet. Zero errors on documentation.',c:O},
+{t:'Fulfill 800 roasted packs — sustained delivery, no disruption',c:O},
+{t:'Coordinadora de Campo: Week 9 field report — Brix rates, Week 18 volume forecast',c:O},
+{t:'B Corp: confirm certification timeline from B Lab in writing — expected date?',c:B}],
+TUE:[
+{t:'35 green roaster DMs — close remaining deals for Week 18 target of 3,800 lbs',c:O},
+{t:'Fulfill Tuesday orders by 2PM',c:O},
+{t:'Contract roaster NDA: confirm exclusivity protections in place',c:L},
+{t:'2,800 lbs green: freight forwarder confirmed, no documentation gaps',c:O},
+{t:'B Corp: final BIA checklist — every section complete, every claim documented',c:B},
+{t:'Do you have 3,800 lbs of green coffee confirmed in writing for Week 18?',c:O}],
+WED:[
+{t:'Fulfill Wednesday orders — 800 packs/week sustained',c:O},
+{t:'35 green roaster DMs — continue building post-Week 18 pipeline',c:O},
+{t:'B Corp: request certification letter from B Lab — formal timeline confirmed',c:B},
+{t:'Legal prep for Week 18 audit: organize all documents — LLC + SAS + IP + permits',c:L},
+{t:'Confirm Week 18 supply: 800 packs + 3,800 lbs green — both locked today',c:O},
+{t:'2,800 lbs tracking confirmed, customs on track',c:O}],
+THU:[
+{t:'35 green roaster DMs — all Week 17 follow-ups',c:O},
+{t:'Fulfill Thursday orders by 2PM',c:O},
+{t:'Update P&L: Week 17 actual vs $20,000 weekly target',c:AC},
+{t:'Legal: all permits, certificates, filings organized into audit binder',c:L},
+{t:'B Corp: final checklist — BIA submitted ✓ B Lab verification done ✓ Feedback implemented ✓',c:B},
+{t:'Is the Week 18 3,800 lbs shipment fully operationally ready?',c:O}],
+FRI:[
+{t:'Fulfill all orders — zero backlog entering final week',c:O},
+{t:'3,800 lbs green coffee: mill confirmed ready, freight is booked',c:O},
+{t:'Prepare legal audit binder for Week 18: LLC + SAS + trademarks + contracts',c:L},
+{t:'B Corp: confirm all improvements documented — B Lab has what it needs',c:B},
+{t:'Pack all Monday orders — Week 18 starts with zero friction',c:O},
+{t:'Top 3 risks to hitting $170K next week — mitigate each one today',c:O}],
+SAT:[
+{t:'35 green roaster DMs — build post-Week 18 pipeline: confirmed orders beyond Week 18',c:O},
+{t:'Supply chain: full documentation through Week 17 complete for B Corp',c:B},
+{t:'B Corp: prepare 19-week improvement plan based on all B Lab feedback',c:B},
+{t:'Environmental data final collection: 17-week quantified impact',c:B},
+{t:'Week 18 operations brief: every person knows exactly what needs to happen and when',c:O},
+{t:'Contract roaster at full capacity? Any supply risk for Week 18?',c:O}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 2,800 lbs green ✓ $146,354 cumulative?',c:BT},
+{t:'Legal: audit binder complete and ready — nothing outstanding',c:L},
+{t:'B Corp: certification timeline document received from B Lab?',c:B},
+{t:'$23,900 needed in Week 18: 800 packs @ $18 + 3,800 lbs green @ $2.50 — both confirmed ✓',c:BT},
+{t:'Brief Alex: Week 18 — influencers briefed, funnel optimized, Stripe monitoring active',c:BT},
+{t:'Prepare 18-week operations summary for final Sunday review',c:O}]},
+x:{
+MON:[
+{t:'Send 35 DMs — every inactive influencer gets a personal re-engagement message today',c:D},
+{t:'ClickFunnels: conversion rate sprint — top 3 quick wins to implement this week',c:F},
+{t:'Send influencer newsletter: final 2 weeks, maximum effort, leaderboard goes public',c:D},
+{t:'Brief all 71 influencers: this is the final push — your best content is needed now',c:D},
+{t:'ClickFunnels: final email sequence drafted and scheduled for Week 18',c:F},
+{t:'Track B Corp financial data: Month 5 complete — all categories documented',c:B}],
+TUE:[
+{t:'Send 35 DMs + top 5 influencers get exclusive performance bonus for Week 18',c:D},
+{t:'Q2 tax estimate: file or prepare with accountant this week',c:AC},
+{t:'ClickFunnels: Week 18 email sequence — review and approve before scheduling',c:F},
+{t:'Update influencer leaderboard — final rankings preview shared with all partners',c:D},
+{t:'Any influencer inactive this week gets replaced by Monday Week 18',c:D},
+{t:'Subscription LTV at Month 5 — what is the annualized value per subscriber?',c:AC}],
+WED:[
+{t:'Send 35 DMs. This is the final full DM week — every message must be perfect.',c:D},
+{t:'ClickFunnels: "18-week journey" email — transparency story sent to full list',c:F},
+{t:'Brief influencers: final content calendar for Week 18 — exact posts, exact days',c:D},
+{t:'Top performers posting at peak frequency this week?',c:D},
+{t:'ClickFunnels: subscription retention email — personalized to all active subscribers',c:F},
+{t:'Is Stripe tracking to $20K this week? If not, diagnose and adjust today.',c:AC}],
+THU:[
+{t:'Send 35 DMs. $146,354 cumulative. $24K to finish.',c:AC},
+{t:'Stripe: all revenue streams reconciled — roasted + green + subscriptions',c:F},
+{t:'1099 tracker: Month 5 all commissions, year-to-date per influencer',c:AC},
+{t:'ClickFunnels: Week 18 email sequence final review, schedule to send Monday',c:F},
+{t:'Will Week 18 subscription renewals contribute materially to $170K target?',c:AC},
+{t:'Projected Week 18 revenue by channel: roasted, green, subscription renewals',c:AC}],
+FRI:[
+{t:'Send 35 DMs. $20K profit target this week — confirm pace with Stripe at mid-day.',c:D},
+{t:'ClickFunnels: Week 18 promotional email — urgency + value + story, ready to send Monday',c:F},
+{t:'Stripe: payout confirmed and reconciled',c:AC},
+{t:'Build Week 18 DM list: 300 new targets ready — this is the final push',c:D},
+{t:'Prepare final Week 18 influencer brief: exact content calendar, exact posting schedule',c:D},
+{t:'Subscription churn last 4 weeks above 5%? Emergency retention email today.',c:AC}],
+SAT:[
+{t:'Final influencer brief sent to all 71 partners — Week 18 is the moment',c:D},
+{t:'Collect all UGC from Week 17 — final before-Week 18 social proof harvest',c:D},
+{t:'Full 17-week ClickFunnels performance analytics exported and saved',c:F},
+{t:'Engage authentically with every influencer post this week',c:D},
+{t:'Begin writing 18-week brand case study: data, story, impact, B Corp progress',c:D},
+{t:'Top-performing email in the sequence? Use that approach for Week 18.',c:F}],
+SUN:[
+{t:'⭐ REVIEW: 800 packs ✓ 2,800 lbs green ✓ $146,354 cumulative? Final game plan.',c:BT},
+{t:'Send Week 17 influencer newsletter: final week preview, leaderboard, activation request',c:D},
+{t:'$23,900 needed in Week 18: 800 packs + 3,800 lbs green. Both confirmed. No excuses.',c:AC},
+{t:'Queue Week 18 DM list: 300 targets ready for Monday 8AM',c:D},
+{t:'Confirm: influencers briefed ✓ funnel optimized ✓ email scheduled ✓ green locked ✓',c:BT},
+{t:'Write down: what will you do differently in the next 18 weeks?',c:BT}]}},
+18:{a:{
+MON:[
+{t:'Ship 3,800 lbs green coffee — largest week. Perfect execution required.',c:O,f:'FINAL WEEK'},
+{t:'Begin full legal audit: U.S. LLC + Colombia SAS + trademarks + all contracts',c:L},
+{t:'Fulfill 800 roasted packs — sustained delivery, no disruption in final week',c:O},
+{t:'3,800 lbs: freight confirmed, customs docs complete, tracking sent to roaster',c:O},
+{t:'Coordinadora de Campo: Week 10 final performance review — complete record for B Corp',c:O},
+{t:'B Corp: confirm active application status — expected certification date?',c:B}],
+TUE:[
+{t:'Fulfill Tuesday orders by 2PM',c:O},
+{t:'Legal audit: U.S. LLC compliance — annual report filed? Registered agent current?',c:L},
+{t:'3,800 lbs green: freight forwarder confirmed on schedule, no issues',c:O},
+{t:'All 18-week financial documents organized for accountant — tax prep complete',c:L},
+{t:'B Corp: final supply chain transparency document — 18 weeks of impact data compiled',c:B},
+{t:'35 green roaster DMs — Week 18 and beyond pipeline continues',c:O}],
+WED:[
+{t:'Fulfill Wednesday orders',c:O},
+{t:'3,800 lbs green: customs docs confirmed, freight on route, roaster notified of ETA',c:O},
+{t:'Legal audit: Colombia SAS compliance — all filings current, NIT active',c:L},
+{t:'B Corp: 18-week BIA data — is your score above 80 points?',c:B},
+{t:'Legal audit: trademark status — USPTO filing confirmed, no conflicts',c:L},
+{t:'All export permits and ICA certificates current and archived',c:L}],
+THU:[
+{t:'Fulfill Thursday orders — zero backlog going into final 2 days',c:O},
+{t:'Legal audit: all contracts reviewed — roaster contracts, affiliate agreements, founder agreement',c:L},
+{t:'3,800 lbs green: confirm received by roaster — request written delivery confirmation today',c:O},
+{t:'B Corp: prepare 19-week improvement roadmap — what in the next 6 months?',c:B},
+{t:'18-week operations report: fulfillment accuracy, supplier reliability, logistics cost, error rate',c:O},
+{t:'What operational systems need to be hired for or automated in the next phase?',c:O}],
+FRI:[
+{t:'Fulfill all remaining orders — end Week 18 with zero backlog',c:O},
+{t:'Legal audit: confirm all items complete — nothing outstanding',c:L},
+{t:'3,800 lbs green: written delivery confirmation received from roaster',c:O},
+{t:'B Corp: final 18-week impact summary — workers, environment, community, governance',c:B},
+{t:'Complete operations handover document: every SOP, every supplier, every contact',c:O},
+{t:'Write 18-week letter to yourself: what you built, what it cost, what you do next',c:O}],
+SAT:[
+{t:'Final field report: Coordinadora de Campo 18-week performance summary',c:O},
+{t:'B Corp: next 18-week roadmap — specific actions to achieve certification',c:B},
+{t:'Archive all operations documents: supplier contracts, shipping SOPs, quality logs',c:O},
+{t:'Prepare next phase plan: mill scale, second container, new roaster contracts',c:O},
+{t:'Thank your contract roaster personally — this relationship is your foundation',c:O},
+{t:'Update legal binder: all 18-week documents filed and organized permanently',c:L}],
+SUN:[
+{t:'🎯 FINAL: Legal audit complete ✓ All filings current ✓ B Corp submitted ✓',c:L,f:'COMPLETE'},
+{t:'🎯 18-week operations report complete — filed in Google Drive permanently',c:O,f:'COMPLETE'},
+{t:'🎯 B Corp: post-Week 18 certification roadmap confirmed in writing',c:B,f:'COMPLETE'},
+{t:'🎯 Plan next phase: B Corp certification ✓ Mill scale ✓ New roaster contracts ✓',c:BT,f:'COMPLETE'},
+{t:'Celebrate what you built — then set Week 19 targets before midnight',c:BT},
+{t:'Share results with every person who helped: farmers, roasters, influencers',c:BT}]},
+x:{
+MON:[
+{t:'Send 35 DMs — maximum activation. 800 packs this week.',c:D,f:'FINAL WEEK'},
+{t:'ClickFunnels: final email sequence live — urgency + value + story, full list',c:F},
+{t:'Send final influencer activation brief: this is the week, maximum posting',c:D},
+{t:'Stripe: real-time monitoring all week — on pace for $23,900 profit?',c:F},
+{t:'B Corp financial tracking: Month 6 Week 1 — final data point for 18-week report',c:B},
+{t:'All 71 influencers briefed and activated for final week?',c:D}],
+TUE:[
+{t:'Send 35 DMs — new targets from Week 18 list',c:D},
+{t:'Stripe: mid-week check — Monday + Tuesday on pace for $23,900 week?',c:F},
+{t:'Brief all influencers: maximum posts this week, specific content hooks',c:D},
+{t:'ClickFunnels: email day 2 — social proof + urgency combination',c:F},
+{t:'Send influencer leaderboard to all partners: who is in the lead?',c:D},
+{t:'Any influencer at reduced frequency? Personal outreach today.',c:D}],
+WED:[
+{t:'Send 35 DMs. Mid-week check: 400+ packs sold so far?',c:D},
+{t:'ClickFunnels: "18 weeks, X packs, X roasters, B Corp in progress" — final story email',c:F},
+{t:'Green coffee B2B funnel — any roasters submitted inquiries? Follow up same day.',c:F},
+{t:'Who has not posted this week? Personal message today — not tomorrow.',c:D},
+{t:'ClickFunnels: subscription churn — any cancellations? Retention call within 2 hours.',c:F},
+{t:'Cumulative Stripe revenue through Wednesday — on track for target?',c:AC}],
+THU:[
+{t:'Send 35 DMs. Stripe total must show $170,254 cumulative by Sunday.',c:AC},
+{t:'All invoices confirmed paid: green coffee buyers + D2C subscriptions',c:F},
+{t:'ClickFunnels: email day 4 — final value proposition + call to action',c:F},
+{t:'1099 tracker: final month commissions logged — complete 18-week record',c:AC},
+{t:'Subscription renewals this week — how much recurring revenue confirmed?',c:AC},
+{t:'Projected final Stripe total — hitting $170,254?',c:AC}],
+FRI:[
+{t:'Send 35 DMs — final day of active DM outreach. Log every last reply.',c:D},
+{t:'ClickFunnels: final email — thank you + subscription retention offer',c:F},
+{t:'Stripe: Friday revenue check — how much left to hit the weekly target?',c:AC},
+{t:'Offer retention deal to any subscriber who cancelled this week — personal message',c:F},
+{t:'Are all influencer affiliate links still working correctly?',c:F},
+{t:'Prepare final financial summary: 18-week P&L, CAC, LTV, subscription %, channel margins',c:AC}],
+SAT:[
+{t:'Thank top 10 influencer performers personally — handwritten message or video',c:D},
+{t:'Collect all UGC from Week 18 — final addition to 18-week social proof library',c:D},
+{t:'Complete 18-week brand case study: metrics, story, impact, B Corp, next phase',c:D},
+{t:'ClickFunnels: full 18-week analytics export — save everything permanently',c:F},
+{t:'Subscription base at end of Week 18 — this is your recurring revenue foundation',c:AC},
+{t:'Write personal thank-you to your top 5 influencers — they are your partners',c:D}],
+SUN:[
+{t:'🎯 FINAL: Full 18-week P&L — Stripe total vs $170,254. Document the exact number.',c:AC,f:'COMPLETE'},
+{t:'🎯 CAC, LTV, subscription %, channel margins — every metric in one document forever',c:AC,f:'COMPLETE'},
+{t:'🎯 Influencer program: 18-week results summary shared with all 71 partners',c:D,f:'COMPLETE'},
+{t:'🎯 ClickFunnels: conversion funnel archived — baseline for next 18 weeks',c:F,f:'COMPLETE'},
+{t:'Send Week 18 influencer newsletter: final results, leaderboard winners, next phase',c:D},
+{t:'Set Week 19 targets before midnight — the next phase starts tomorrow',c:BT}]}}
+};
+
+
+// ── TIKTOK STRATEGY BY PHASE ─────────────────────────────────────────────────
+const TIKTOK = {
+  // Weeks 1-3: Foundation — Build presence, establish voice
+  1: {
+    video:'Behind-the-scenes: setting up The Coffee Code — show the real process, no filter',
+    expect:'20–200 views · establishes authenticity from day 1',
+    phase:'Wks 1–3 · BUILD PRESENCE\nPost 1x/day. Show the real operation — farm footage, bags arriving, the setup. Hook: "Most coffee was roasted 6 months ago. This one was roasted 3 days ago." No selling yet. Just story.'
+  },
+  2: {
+    video:'"How we track harvest date to roast date" — show the bag stamp process on camera',
+    expect:'50–500 views · freshness hook is highly shareable',
+    phase:'Wks 1–3 · BUILD PRESENCE\nPost 1x/day. Show the real operation. Goal: 100 followers and 5 videos with 500+ views before any selling begins.'
+  },
+  3: {
+    video:'"This is what fresh Colombian coffee smells like" — ASMR sensory video, no words needed',
+    expect:'100–2,000 views · ASMR coffee content performs exceptionally',
+    phase:'Wks 1–3 · BUILD PRESENCE\nPost 1x/day. By Week 3 you should have 10 videos live. Review analytics: which performed best? Double down on that format.'
+  },
+  // Weeks 4-7: Growth — Hook content, establish authority
+  4: {
+    video:'"I asked 10 baristas how old their coffee was. The answers shocked me." — street interview format',
+    expect:'500–10,000 views · controversy + coffee knowledge = virality',
+    phase:'Wks 4–7 · GROWTH HOOKS\nPost 1x/day. Introduce the freshness controversy hook. Stitch and duet with coffee creators. Target: 500 followers and 1 video over 5K views.'
+  },
+  5: {
+    video:'"Day in the life at our Colombian coffee mill" — altitude footage, cherry sorting, NUNA dryers',
+    expect:'300–5,000 views · origin content builds deep trust',
+    phase:'Wks 4–7 · GROWTH HOOKS\nPost 1x/day. Mix origin content with freshness education. Start using trending audio. Add a soft CTA in bio: "link to try freshest espresso."'
+  },
+  6: {
+    video:'"What your $30 bag of coffee actually costs to make" — transparency breakdown on camera',
+    expect:'1K–20K views · cost transparency videos go viral in food',
+    phase:'Wks 4–7 · GROWTH HOOKS\nPost 1x/day. Start Duetting popular coffee TikToks. This week: introduce your first soft product mention — no hard sell, just "this is what we make."'
+  },
+  7: {
+    video:'"We are pursuing B Corp certification — here is what that means for your coffee"',
+    expect:'200–3,000 views · values-based content builds loyal buyers',
+    phase:'Wks 4–7 · GROWTH HOOKS\nGo/No-Go review on Sunday. By Week 7 target: 1,000 followers, 25+ videos, 1 video over 10K views. Identify your top 3 performing video formats.'
+  },
+  // Weeks 8-12: Scale — Convert attention to buyers
+  8: {
+    video:'"We hit 430 orders this week — here is the real operation behind it" — milestone content',
+    expect:'500–8,000 views · milestone + transparency = strong hook',
+    phase:'Wks 8–12 · CONVERT TO BUYERS\nPost 1–2x/day. Add link in bio to ClickFunnels funnel. First explicit CTA: "Try it — link in bio." Influencer TikTok collabs begin. Target: 2,500 followers.'
+  },
+  9: {
+    video:'"Espresso shot comparison: 3-month old beans vs our 3-day roast" — side by side on camera',
+    expect:'2K–30K views · comparison content = highest conversion in coffee',
+    phase:'Wks 8–12 · CONVERT TO BUYERS\nPost 1–2x/day. Comparison content is your highest-converting TikTok format. Film it this week even if it takes multiple takes. This video should drive funnel traffic.'
+  },
+  10: {
+    video:'"How to pull the perfect espresso shot with freshly roasted beans" — tutorial with our coffee',
+    expect:'1K–15,000 views · tutorial content = saves to watchlist',
+    phase:'Wks 8–12 · CONVERT TO BUYERS\nPost 1–2x/day. Tutorial + product = the highest-converting TikTok format. Repurpose this video as a ClickFunnels testimonial/ad if it performs.'
+  },
+  11: {
+    video:'"This is what 720 coffee orders looks like shipping out of Colombia in one week"',
+    expect:'1K–20K views · scale + origin story = compelling and shareable',
+    phase:'Wks 8–12 · CONVERT TO BUYERS\nPost 2x/day this week — volume milestone content performs well. Start saving your best-performing videos for repurposing as paid ads in Month 4.'
+  },
+  12: {
+    video:'"800 packs in one week — what we learned about freshness at scale" — milestone + lesson',
+    expect:'2K–25K views · milestone content spikes on goal weeks',
+    phase:'Wks 8–12 · CONVERT TO BUYERS\n🏆 MILESTONE WEEK. Post 2x/day. This week\'s content should celebrate the scale milestone AND push the funnel link. Top 3 videos from this month become paid TikTok ads in Month 4.'
+  },
+  // Weeks 13-18: Authority — Brand becomes the category
+  13: {
+    video:'"We just shipped our first batch of green coffee to a U.S. specialty roaster — watch"',
+    expect:'1K–20K views · B2B coffee content is underserved on TikTok',
+    phase:'Wks 13–18 · BRAND AUTHORITY\nPost 2x/day. Document the dual revenue launch. Green coffee B2B content is almost nonexistent on TikTok — you own this niche. Target: 5,000 followers.'
+  },
+  14: {
+    video:'"What a specialty roaster looks for when buying Colombian green coffee — we ask one"',
+    expect:'500–8,000 views · industry insider content = authority marker',
+    phase:'Wks 13–18 · BRAND AUTHORITY\nPost 2x/day. Film collab content with first U.S. roaster if possible. Their audience + yours = cross-pollination. This is the highest-ROI TikTok strategy at this stage.'
+  },
+  15: {
+    video:'"B Corp certification process — Week 15 update: what the assessment actually looks like"',
+    expect:'300–5,000 views · documentary-style series builds loyal viewers',
+    phase:'Wks 13–18 · BRAND AUTHORITY\nPost 2x/day. B Corp documentary series continues. Each B Corp update video builds a subscriber who genuinely cares about your mission — these are your best long-term customers.'
+  },
+  16: {
+    video:'"$126K in 16 weeks — what actually worked and what failed" — transparent milestone reveal',
+    expect:'5K–100K views · revenue transparency is THE highest-viral format',
+    phase:'Wks 13–18 · BRAND AUTHORITY\nPost 2x/day. Revenue transparency videos are the most viral content format on TikTok for brands. This one video could generate more traffic than a month of DMs.'
+  },
+  17: {
+    video:'"Week 17: 2,800 lbs of green coffee shipped. Here is the full logistics chain on camera."',
+    expect:'1K–15K views · logistics + scale = compelling documentary content',
+    phase:'Wks 13–18 · BRAND AUTHORITY\nPost 2x/day. The behind-the-scenes logistics documentary format is your brand signature. No one else is showing this. Own it completely.'
+  },
+  18: {
+    video:'"18 weeks, $170K, B Corp in progress — everything we built and what comes next"',
+    expect:'10K–200K views · series finale content = highest viral potential of all 18 weeks',
+    phase:'Week 18 · SERIES FINALE\nPost 2x/day. This is your biggest content week. The 18-week reveal video is your brand-defining moment on TikTok. Archive every video, export all analytics. The next 18 weeks start Monday.'
+  }
+};
+
+function updateSocialPanel(wk) {
+  const tt = TIKTOK[wk] || TIKTOK[1];
+  const vd = document.getElementById('tiktok-video-desc');
+  const e1 = document.getElementById('tiktok-expect-1');
+  const ph = document.getElementById('tiktok-phase-text');
+  if (vd) vd.childNodes[0].nodeValue = tt.video;
+  if (e1) e1.textContent = '→ ' + tt.expect;
+  if (ph) ph.textContent = tt.phase;
+}
+// Uses shared persistent storage. Both users check tasks and see each other's
+// changes automatically. Polls every 8 seconds for updates.
+
+let wk = 1;
+let done = {};
+let syncing = false;
+let lastHash = '';
+const STORAGE_KEY = 'tcc-warroom-v2';
+const POLL_MS = 8000;
+const CC = {ops:'c-ops',dm:'c-dm',legal:'c-legal',acc:'c-acc',
+            funnel:'c-funnel',bcorp:'c-bcorp',both:'c-both'};
+
+async function loadDone() {
+  try {
+    const res = await window.storage.get(STORAGE_KEY, true);
+    return res ? JSON.parse(res.value) : {};
+  } catch(e) { return {}; }
+}
+
+async function saveDone(d) {
+  try { await window.storage.set(STORAGE_KEY, JSON.stringify(d), true); }
+  catch(e) {}
+}
+
+function hashObj(obj) {
+  return JSON.stringify(Object.keys(obj).sort().map(k => k+':'+obj[k]));
+}
+
+function showSync(type) {
+  const el = document.getElementById('sync-dot');
+  if (!el) return;
+  if (type === 'saving') {
+    el.textContent = '● saving…';
+    el.style.color = 'var(--gold)';
+  } else {
+    el.textContent = '● synced';
+    el.style.color = 'var(--green)';
+  }
+  el.style.opacity = '1';
+  setTimeout(() => { el.style.opacity = '0.4'; }, 2500);
+}
+
+async function toggle(k) {
+  if (syncing) return;
+  syncing = true;
+  showSync('saving');
+  const fresh = await loadDone();
+  if (fresh[k]) { delete fresh[k]; } else { fresh[k] = true; }
+  done = fresh;
+  lastHash = hashObj(done);
+  await saveDone(done);
+  render();
+  syncing = false;
+  showSync('synced');
+}
+
+async function poll() {
+  if (syncing) return;
+  try {
+    const fresh = await loadDone();
+    const h = hashObj(fresh);
+    if (h !== lastHash) {
+      done = fresh;
+      lastHash = h;
+      render();
+      showSync('synced');
+    }
+  } catch(e) {}
+}
+
+function buildCol(person, data) {
+  const isA = person === 'a';
+  const color = isA ? 'var(--alejandro)' : 'var(--alex)';
+  const name  = isA ? 'ALEJANDRO' : 'ALEX';
+  const role  = isA ? 'Operations · Shipping · Legal · B Corp'
+                    : 'Brand · DMs · ClickFunnels · Stripe · Accounting';
+  const init  = isA ? 'A' : 'AX';
+
+  const days = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  let total = 0, doneCount = 0;
+  days.forEach(day => {
+    (data[day]||[]).forEach((_,i) => {
+      total++;
+      if (done[`${wk}-${person}-${day}-${i}`]) doneCount++;
+    });
+  });
+  const pct = total ? Math.round(doneCount/total*100) : 0;
+
+  let h = `<div class="p-head">
+    <div class="p-dot" style="background:${color}22;color:${color}">${init}</div>
+    <div style="flex:1">
+      <div class="p-name" style="color:${color}">${name}</div>
+      <div class="p-role">${role}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${color};line-height:1">${pct}%</div>
+      <div style="font-size:8px;color:var(--dim);letter-spacing:1px">${doneCount}/${total} DONE</div>
+    </div>
+  </div>`;
+
+  days.forEach(day => {
+    const tasks = data[day] || [];
+    if (!tasks.length) return;
+    h += `<div class="day-block"><div class="day-lbl${day==='SUN'?' sun':''}">${day}</div>`;
+    tasks.forEach((t, i) => {
+      const k = `${wk}-${person}-${day}-${i}`;
+      const isDone = !!done[k];
+      h += `<div class="task${isDone?' done':''}" onclick="toggle('${k}')">
+        <div class="chk">${isDone?'✓':''}</div>
+        <div class="cat ${CC[t.c]||'c-both'}"></div>
+        <div class="t-text">${t.t}${t.n?`<em>${t.n}</em>`:''}</div>
+        ${t.f?`<span class="flag">${t.f}</span>`:''}
+      </div>`;
+    });
+    h += `</div>`;
+  });
+  return h;
+}
+
+function render() {
+  document.getElementById('wlbl').textContent = `WEEK ${wk}`;
+  document.getElementById('wphase').textContent = PH[wk]||'';
+  document.getElementById('pfill').style.width = `${((wk-1)/17*100).toFixed(0)}%`;
+  document.getElementById('pval').textContent = `$${CUM[wk-1].toLocaleString()} cumulative target`;
+  document.getElementById('sphase').textContent = PH[wk]||'';
+  document.getElementById('skpis').innerHTML = `
+    <div class="kpi"><div class="kpi-v">${PKS[wk-1].toLocaleString()}</div><div class="kpi-l">Packs/Wk</div></div>
+    <div class="kpi"><div class="kpi-v">$${PRF[wk-1].toLocaleString()}</div><div class="kpi-l">Profit Target</div></div>
+    <div class="kpi"><div class="kpi-v">${GRN[wk-1]>0?GRN[wk-1].toLocaleString()+' lbs':'—'}</div><div class="kpi-l">Green Coffee</div></div>
+    <div class="kpi"><div class="kpi-v">$${CUM[wk-1].toLocaleString()}</div><div class="kpi-l">Cumulative</div></div>`;
+  const dr = document.getElementById('dots');
+  dr.innerHTML = '';
+  for (let w = 1; w <= 18; w++) {
+    const d = document.createElement('div');
+    d.className = 'dot'+(w===wk?' active':'')+([8,12,18].includes(w)?' star':'');
+    d.textContent = w;
+    d.onclick = () => { wk = w; render(); };
+    dr.appendChild(d);
+  }
+  const wd = W[wk]||W[1];
+  document.getElementById('col-a').innerHTML = buildCol('a', wd.a);
+  document.getElementById('col-x').innerHTML = buildCol('x', wd.x);
+  updateSocialPanel(wk);
+}
+
+document.getElementById('prev').onclick = () => { if(wk>1){ wk--; render(); } };
+document.getElementById('next').onclick = () => { if(wk<18){ wk++; render(); } };
+
+(async () => {
+  done = await loadDone();
+  lastHash = hashObj(done);
+  render();
+  setInterval(poll, POLL_MS);
+})();
+</script>
+</body>
+</html>
